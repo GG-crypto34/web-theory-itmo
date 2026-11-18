@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Теория ЛР 5</title>
+<style>
+:root {
+  --bg: #f6f1e4; --paper: #fffdf6; --ink: #2b2620; --muted: #6f665a; --line: #e2d8c3;
+  --accent: #8a3b2e; --accent-soft: #f3e2d6; --def: #eef3fb; --def-line: #4a6fa5;
+  --key: #edf6ea; --key-line: #4f8a43; --trap: #fbefe8; --trap-line: #b5532f;
+  --code-bg: #f1ebdc; --qa: #faf6ec;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1a17; --paper: #23211d; --ink: #e9e3d6; --muted: #a69d8e; --line: #3a362f;
+    --accent: #e08a6f; --accent-soft: #3a2a24; --def: #1f2735; --def-line: #7d9fd4;
+    --key: #1f2b1d; --key-line: #86c077; --trap: #33221b; --trap-line: #e08a6f;
+    --code-bg: #2c2924; --qa: #26241f;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1a17; --paper: #23211d; --ink: #e9e3d6; --muted: #a69d8e; --line: #3a362f;
+  --accent: #e08a6f; --accent-soft: #3a2a24; --def: #1f2735; --def-line: #7d9fd4;
+  --key: #1f2b1d; --key-line: #86c077; --trap: #33221b; --trap-line: #e08a6f;
+  --code-bg: #2c2924; --qa: #26241f;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 17px/1.65 Georgia, "Times New Roman", serif;
+}
+.page {
+  max-width: 860px; margin: 24px auto; padding: 32px 44px 60px;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 6px;
+}
+@media (max-width: 700px) { .page { margin: 0; padding: 20px 16px 40px; border: 0; border-radius: 0; } }
+.topbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; font-size: 14px; }
+.topbar a { color: var(--accent); }
+.theme-btn {
+  font: inherit; font-size: 14px; color: var(--ink); background: var(--accent-soft);
+  border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; cursor: pointer;
+}
+header.title { text-align: center; margin: 28px 0 8px; }
+header.title h1 { font-weight: normal; font-size: 32px; margin: 0 0 6px; line-height: 1.25; }
+header.title .sub { font-style: italic; color: var(--muted); margin: 0; }
+header.title .meta { font-variant: small-caps; letter-spacing: .04em; color: var(--muted); font-size: 15px; margin-top: 10px; }
+nav.toc { border: 1px solid var(--line); border-radius: 6px; padding: 14px 20px; margin: 28px 0; columns: 2; column-gap: 28px; }
+@media (max-width: 700px) { nav.toc { columns: 1; } }
+nav.toc a { display: block; color: var(--ink); text-decoration: none; padding: 2px 0; break-inside: avoid; font-size: 15px; }
+nav.toc a:hover { color: var(--accent); }
+nav.toc b { display: block; column-span: all; margin-bottom: 6px; }
+h2 { font-weight: normal; font-size: 25px; margin: 48px 0 10px; padding-top: 16px; border-top: 1px solid var(--line); line-height: 1.3; }
+h2 .num {
+  display: inline-block; min-width: 34px; height: 34px; line-height: 34px; text-align: center;
+  margin-right: 10px; border-radius: 50%; background: var(--accent); color: var(--paper); font-size: 17px;
+}
+h3 { font-size: 19px; margin: 26px 0 6px; color: var(--accent); }
+p.lead { font-style: italic; color: var(--muted); margin-top: 0; }
+a { color: var(--accent); }
+code { font-family: Consolas, "Courier New", monospace; font-size: .86em; background: var(--code-bg); padding: 1px 5px; border-radius: 3px; overflow-wrap: anywhere; }
+pre { background: var(--code-bg); padding: 12px 14px; border-radius: 6px; overflow-x: auto; font-size: 14px; line-height: 1.5; }
+pre code { background: none; padding: 0; font-size: inherit; }
+.def, .key, .trap { padding: 10px 14px; margin: 14px 0; border-left: 4px solid; border-radius: 0 6px 6px 0; }
+.def { background: var(--def); border-color: var(--def-line); }
+.key { background: var(--key); border-color: var(--key-line); }
+.trap { background: var(--trap); border-color: var(--trap-line); }
+.tablewrap { overflow-x: auto; margin: 14px 0; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); font-weight: normal; font-variant: small-caps; letter-spacing: .03em; }
+.qa { background: var(--qa); border: 1px dashed var(--line); border-radius: 6px; padding: 10px 14px; margin: 12px 0; }
+.qa-ans { filter: blur(5px); cursor: pointer; transition: filter .2s; user-select: none; }
+.qa-ans.open { filter: none; user-select: text; cursor: auto; }
+.qa-hint { font-size: 13px; color: var(--muted); }
+.reveal-all { margin-left: 8px; }
+footer { margin-top: 48px; text-align: center; color: var(--muted); font-size: 14px; }
+@media print {
+  body { background: #fff; }
+  .page { border: 0; margin: 0; }
+  .topbar, .qa-hint { display: none; }
+  .qa-ans { filter: none; }
+  h2 { break-before: page; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+
+<div class="topbar">
+  <span><a href="#toc">Содержание</a> | <a href="#defense">Шпаргалка к защите</a> | <a href="../lab4/theory.html">Теория ЛР 4</a></span>
+  <span>
+    <button type="button" class="theme-btn reveal-all" id="revealAll">Показать все ответы</button>
+    <button type="button" class="theme-btn" id="themeBtn">Тема</button>
+  </span>
+</div>
+
+<header class="title">
+  <h1>Лабораторная работа 5: теория</h1>
+  <p class="sub">15 вопросов к защите: метафреймворки, рендеринг, гидратация, данные, кеш и middleware. Примеры из нашего кода на Next.js 16</p>
+  <p class="meta">ИТМО | Веб-программирование | 3 семестр</p>
+</header>
+
+<nav class="toc" id="toc">
+  <b>Содержание</b>
+  <a href="#q1">1. Метафреймворки: Next.js, Nuxt, SvelteKit, AnalogJS</a>
+  <a href="#q2">2. Ограничения SPA. CSR и SSR</a>
+  <a href="#q3">3. Стратегии рендеринга: CSR, SSR, SSG, ISR</a>
+  <a href="#q4">4. Гибридный рендеринг</a>
+  <a href="#q5">5. Hydration и Hydration Mismatch</a>
+  <a href="#q6">6. Streaming SSR</a>
+  <a href="#q7">7. Серверные и клиентские компоненты</a>
+  <a href="#q8">8. Файловая маршрутизация и layouts</a>
+  <a href="#q9">9. Клиентская навигация и prefetching</a>
+  <a href="#q10">10. Серверная загрузка данных и REST API</a>
+  <a href="#q11">11. Request Waterfall</a>
+  <a href="#q12">12. Кеширование: hit, miss, стратегии</a>
+  <a href="#q13">13. Revalidation и инвалидация кеша</a>
+  <a href="#q14">14. Middleware и защищённые маршруты</a>
+  <a href="#q15">15. Loading, Error, Not Found и HTTP-статусы</a>
+  <a href="#defense">Шпаргалка к защите</a>
+</nav>
+
+<!-- 1 -->
+<h2 id="q1"><span class="num">1</span>Метафреймворки: назначение и отличия от обычных фреймворков</h2>
+<p class="lead">UI-фреймворк умеет рисовать компоненты. Метафреймворк добавляет вокруг него всё остальное приложение: сервер, маршруты, данные, сборку.</p>
+<div class="def"><b>Определение.</b> <b>Метафреймворк</b> - фреймворк поверх UI-фреймворка, который даёт готовую архитектуру full-stack приложения: файловую маршрутизацию, серверный рендеринг, загрузку данных на сервере, кеш, middleware, серверные обработчики и сборку для продакшена.</div>
+<div class="tablewrap"><table>
+<tr><th>UI-фреймворк</th><th>метафреймворк</th><th>особенности</th></tr>
+<tr><td>React</td><td><b>Next.js</b></td><td>App Router, серверные компоненты (RSC), server actions, Data Cache, proxy (бывший middleware)</td></tr>
+<tr><td>Vue</td><td>Nuxt</td><td>автоимпорты, <code>useFetch</code>, сервер Nitro, модули</td></tr>
+<tr><td>Svelte</td><td>SvelteKit</td><td>функции <code>load</code>, form actions, hooks, адаптеры под разные хостинги</td></tr>
+<tr><td>Angular</td><td>AnalogJS</td><td>файловые маршруты и SSR для Angular на Vite</td></tr>
+</table></div>
+<p>Чем отличается от "просто React + Vite" из ЛР 4:</p>
+<div class="tablewrap"><table>
+<tr><th></th><th>ЛР 4 (React SPA)</th><th>ЛР 5 (Next.js)</th></tr>
+<tr><td>где рисуется HTML</td><td>в браузере</td><td>на сервере, затем гидратация</td></tr>
+<tr><td>маршруты</td><td>таблица в <code>App.jsx</code> (react-router)</td><td>папки в <code>src/app</code></td></tr>
+<tr><td>данные</td><td>браузер ходит в API</td><td>сервер Next ходит в API, браузер получает готовое</td></tr>
+<tr><td>защита страниц</td><td>компонент <code>ProtectedRoute</code></td><td><code>proxy.js</code> до рендера</td></tr>
+<tr><td>в Docker</td><td>nginx со статикой</td><td>Node-сервер Next</td></tr>
+</table></div>
+<div class="key"><b>В нашем коде.</b> Next.js 16.4 с App Router, JavaScript без TypeScript. Java-бэкенд из ЛР 3-4 не менялся: вся бизнес-логика, проверка паролей и база остаются там, а сервер Next только рендерит страницы и ходит в API.</div>
+<div class="qa"><b>Вопрос:</b> Одной фразой: что такое метафреймворк?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Надстройка над UI-фреймворком, которая даёт маршруты по файлам, серверный рендеринг, загрузку данных, кеш, middleware и сборку - то есть готовое приложение, а не только компоненты.</span></div>
+<div class="qa"><b>Вопрос:</b> Next.js - это backend?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> У него есть серверная часть, но у нас она - "backend for frontend": только рендер, маршрутизация, middleware и получение данных. Бизнес-логика и БД в Java.</span></div>
+
+<!-- 2 -->
+<h2 id="q2"><span class="num">2</span>Ограничения SPA. Клиентский и серверный рендеринг</h2>
+<p class="lead">SPA быстрая после загрузки, но первый экран ждёт и JavaScript, и данные.</p>
+<div class="def"><b>Определение.</b> <b>CSR (Client-Side Rendering)</b> - сервер отдаёт пустой HTML и бандл JS; браузер выполняет JS, запрашивает данные и строит интерфейс. Так работала ЛР 4.</div>
+<div class="def"><b>Определение.</b> <b>SSR (Server-Side Rendering)</b> - на каждый запрос сервер выполняет компоненты, получает данные и отдаёт готовый HTML. Потом браузер загружает JS и гидратирует страницу.</div>
+<pre><code>CSR:  HTML(пустой) -&gt; JS -&gt; выполнение -&gt; запрос данных -&gt; рендер   (контент в самом конце)
+SSR:  запрос -&gt; сервер: данные + рендер -&gt; HTML с контентом -&gt; JS -&gt; гидратация</code></pre>
+<div class="tablewrap"><table>
+<tr><th>ограничение SPA</th><th>почему</th></tr>
+<tr><td>медленный первый экран</td><td>сначала скачать и выполнить весь JS, потом ещё запрос данных</td></tr>
+<tr><td>плохо для SEO и превью ссылок</td><td>робот видит пустой <code>&lt;div id="root"&gt;</code></td></tr>
+<tr><td>большой бандл</td><td>весь код интерфейса едет в браузер</td></tr>
+<tr><td>нагрузка на слабые устройства</td><td>весь рендер на клиенте</td></tr>
+<tr><td>мигание интерфейса</td><td>"гость" -&gt; "пользователь", пока восстанавливается сессия</td></tr>
+</table></div>
+<div class="def"><b>Определение.</b> Метрики. <b>TTFB</b> - время до первого байта ответа. <b>FCP</b> - первая отрисовка контента. <b>LCP</b> - отрисовка самого большого элемента. <b>INP</b> - задержка реакции на ввод. <b>CLS</b> - сдвиги вёрстки. LCP, INP и CLS - Core Web Vitals.</div>
+<p>SSR улучшает FCP и LCP, но увеличивает TTFB (сервер ждёт данные) и нагружает сервер. Медленный бэкенд SSR не ускорит; для этого есть стриминг и кеш.</p>
+<div class="key"><b>В нашем коде.</b> Открой <code>/students</code> и посмотри исходный код (Ctrl+U): таблица студентов уже в HTML. В ЛР 4 там был пустой <code>&lt;div id="root"&gt;</code>. Шапка сразу показывает логин и роль, без мигания: <code>layout.jsx</code> читает сессию из cookie на сервере.</div>
+<div class="qa"><b>Вопрос:</b> Почему SSR может ухудшить TTFB?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Сервер не может отправить первый байт, пока не получит данные и не отрендерит страницу. При CSR пустая оболочка отдаётся мгновенно.</span></div>
+
+<!-- 3 -->
+<h2 id="q3"><span class="num">3</span>Стратегии рендеринга: CSR, SSR, SSG, ISR</h2>
+<p class="lead">Главный вопрос: когда создаётся HTML - в браузере, на каждый запрос, при сборке или при сборке с периодическим обновлением.</p>
+<div class="tablewrap"><table>
+<tr><th>стратегия</th><th>когда создаётся HTML</th><th>плюсы</th><th>минусы</th><th>когда применять</th></tr>
+<tr><td><b>CSR</b></td><td>в браузере</td><td>дешёвый сервер, богатая интерактивность</td><td>медленный первый экран, SEO</td><td>закрытые панели, редакторы</td></tr>
+<tr><td><b>SSR</b></td><td>на каждый запрос</td><td>свежие и персональные данные, SEO</td><td>нагрузка на сервер, TTFB</td><td>личные кабинеты, поиск, фильтры</td></tr>
+<tr><td><b>SSG</b></td><td>при сборке (<code>next build</code>)</td><td>максимально быстро, раздаётся с CDN</td><td>данные устаревают до пересборки</td><td>документация, лендинги, блог</td></tr>
+<tr><td><b>ISR</b></td><td>при сборке, потом пересоздаётся в фоне</td><td>скорость SSG + обновление</td><td>данные могут быть устаревшими до revalidate</td><td>каталоги, новости</td></tr>
+</table></div>
+<div class="def"><b>Определение.</b> <b>ISR (Incremental Static Regeneration)</b> - статическая страница с временем жизни. По истечении <code>revalidate</code> первый посетитель получает старую версию, а сервер в фоне строит новую (stale-while-revalidate).</div>
+<p>В Next стратегия выбирается автоматически: если страница использует запросо-зависимые данные (<code>cookies()</code>, <code>headers()</code>, <code>searchParams</code>), она динамическая (SSR); если нет - статическая (SSG).</p>
+<div class="key"><b>В нашем коде.</b> Все страницы динамические: <code>next build</code> помечает их значком <code>ƒ</code> (Dynamic). Причина - каждая страница персональна: читает cookie сессии, а список ещё и <code>searchParams</code>. SSG тут не подойдёт: студенты закрыты авторизацией и зависят от фильтров. Идею ISR мы используем на уровне данных: ответы Java кешируются на 30 секунд (вопрос 12).</div>
+<div class="qa"><b>Вопрос:</b> Почему у вас нет SSG?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Все данные закрыты логином и зависят от пользователя и фильтров. Статическая страница была бы одна на всех, а при сборке нет ни токена, ни параметров запроса.</span></div>
+
+<!-- 4 -->
+<h2 id="q4"><span class="num">4</span>Гибридный рендеринг</h2>
+<p class="lead">Не "весь сайт SSR" или "весь сайт CSR", а своя стратегия для каждой страницы и даже для частей одной страницы.</p>
+<div class="def"><b>Определение.</b> <b>Гибридный рендеринг</b> - сочетание стратегий в одном приложении: одни маршруты статические, другие серверные; внутри страницы серверная разметка соседствует с интерактивными клиентскими "островами".</div>
+<p>Уровни гибридности:</p>
+<ol>
+  <li><b>по маршрутам</b>: <code>/about</code> - SSG, <code>/students</code> - SSR;</li>
+  <li><b>по компонентам</b>: страница рендерится на сервере, а кнопки, формы и меню - клиентские компоненты, которые после гидратации работают как SPA;</li>
+  <li><b>по времени</b>: каркас страницы отправляется сразу, медленная часть догружается стримингом.</li>
+</ol>
+<div class="key"><b>В нашем коде.</b> Страница <code>/students</code>: серверная оболочка и таблица (<code>StudentsTable</code> - серверный компонент) + клиентские <code>StudentFilters</code> и <code>StudentSearch</code> (поиск с задержкой 300 мс, селекты сортировки). Переходы по ссылкам после загрузки - клиентские, как в SPA. Страница студента: серверная карточка + клиентская <code>DeleteStudentButton</code> с модальным окном.</div>
+<div class="qa"><b>Вопрос:</b> Где у вас граница между сервером и клиентом на странице списка?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> page.jsx и StudentsTable рендерятся на сервере и ходят в Java. StudentFilters и StudentSearch помечены 'use client': они меняют URL через router.push, а сервер в ответ присылает новый рендер таблицы.</span></div>
+
+<!-- 5 -->
+<h2 id="q5"><span class="num">5</span>Hydration: назначение и Hydration Mismatch</h2>
+<p class="lead">Сервер прислал "картинку" страницы; гидратация оживляет её: навешивает обработчики и подключает состояние.</p>
+<div class="def"><b>Определение.</b> <b>Гидратация (hydration)</b> - процесс, при котором React в браузере проходит по уже готовому серверному HTML, строит у себя то же дерево компонентов и привязывает к существующим DOM-узлам обработчики событий и состояние, не пересоздавая DOM.</div>
+<p>Порядок: HTML пришёл и показан (страница видна, но кнопки ещё "мёртвые") -&gt; загрузился JS -&gt; <code>hydrateRoot</code> -&gt; страница интерактивна. Между показом и гидратацией клик по кнопке ничего не делает - это одна из причин держать клиентский JS маленьким.</p>
+<div class="def"><b>Определение.</b> <b>Hydration mismatch</b> - разметка, которую React построил в браузере при гидратации, не совпала с серверным HTML. React выдаёт ошибку и перерисовывает расхождение на клиенте (теряется смысл SSR, возможно мигание).</div>
+<div class="tablewrap"><table>
+<tr><th>типичная причина</th><th>почему разное</th><th>как избежать</th></tr>
+<tr><td><code>Date.now()</code>, <code>Math.random()</code> в рендере</td><td>сервер и браузер вызвали в разное время</td><td>вычислить один раз на сервере и передать props</td></tr>
+<tr><td><code>window</code>, <code>localStorage</code> в рендере</td><td>на сервере их нет</td><td>читать в <code>useEffect</code> или через <code>useSyncExternalStore</code> с серверным снимком</td></tr>
+<tr><td>форматирование дат и чисел</td><td>разная локаль и часовой пояс</td><td>явная локаль или формат на сервере</td></tr>
+<tr><td>невалидная вложенность HTML</td><td>браузер "чинит" <code>&lt;div&gt;</code> внутри <code>&lt;p&gt;</code></td><td>правильная разметка</td></tr>
+<tr><td>расширения браузера</td><td>меняют DOM до гидратации</td><td><code>suppressHydrationWarning</code> точечно</td></tr>
+</table></div>
+<div class="key"><b>В нашем коде.</b> Пользователь для шапки определяется на сервере (<code>getSession()</code> в <code>layout.jsx</code>) и передаётся в клиентский <code>Navigation</code> как prop - сервер и клиент рисуют одно и то же. Клиентские компоненты не читают <code>window</code> и время в рендере. Фильтры берут значения из URL через <code>useSearchParams</code>, который одинаков на сервере и в браузере. Даты выводятся строкой как пришли из API (<code>2024-09-01</code>), без локального форматирования.</div>
+<div class="qa"><b>Вопрос:</b> Что будет, если в рендере написать {new Date().toLocaleTimeString()}?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Сервер отрисует одно время, браузер при гидратации - другое: hydration mismatch. Время надо передать с сервера или показывать после монтирования в useEffect.</span></div>
+
+<!-- 6 -->
+<h2 id="q6"><span class="num">6</span>Streaming SSR</h2>
+<p class="lead">Не ждать самую медленную часть: отправить готовое сразу, остальное дослать в том же ответе.</p>
+<div class="def"><b>Определение.</b> <b>Streaming SSR</b> - сервер отправляет HTML по частям через chunked-ответ. Сначала каркас страницы и заглушки (fallback) для медленных частей, затем, по мере готовности данных, - их HTML и маленький скрипт, который ставит его на место заглушки.</div>
+<p>Границы стриминга задаёт <code>&lt;Suspense fallback={...}&gt;</code>: всё внутри может прийти позже. <code>loading.jsx</code> в Next - это автоматический Suspense вокруг всей страницы сегмента.</p>
+<p>Плюсы: маленький TTFB и FCP даже при медленном API, части страницы не блокируют друг друга, гидратация тоже идёт по частям (selective hydration).</p>
+<div class="trap"><b>Ловушка.</b> Как только первый кусок ушёл, HTTP-статус и заголовки уже отправлены. Если потом внутри Suspense вызвать <code>notFound()</code> или <code>redirect()</code>, статус останется 200: Next вставит в HTML meta-тег и сделает переход на клиенте.</div>
+<div class="key"><b>В нашем коде.</b> В <code>app/students/page.jsx</code>:
+<pre><code>&lt;Suspense key={queryString(query)} fallback={&lt;StudentsTableSkeleton /&gt;}&gt;
+  &lt;StudentsTable query={query} /&gt;
+&lt;/Suspense&gt;</code></pre>
+Заголовок, фильтры и поиск приходят сразу, на месте таблицы - скелет из плейсхолдеров Bootstrap; когда Java ответит, придёт настоящая таблица. <code>key</code> меняется вместе с фильтрами, поэтому при каждом новом поиске снова показывается скелет. Из-за ловушки выше на странице студента <code>/students/[id]</code> <b>нет</b> <code>loading.jsx</code>: иначе для несуществующего студента вернулся бы статус 200 вместо 404.</div>
+<div class="qa"><b>Вопрос:</b> Чем стриминг отличается от загрузки таблицы через fetch в useEffect?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Данные запрашивает сервер, а таблица приходит готовым HTML в том же HTTP-ответе. Не нужен JS, второго запроса из браузера нет, а при отключённом JS таблица всё равно появится.</span></div>
+
+<!-- 7 -->
+<h2 id="q7"><span class="num">7</span>Серверные и клиентские компоненты</h2>
+<p class="lead">В App Router каждый компонент по умолчанию серверный. Клиентским он становится только с директивой <code>'use client'</code>.</p>
+<div class="tablewrap"><table>
+<tr><th></th><th>серверный компонент (RSC)</th><th>клиентский компонент</th></tr>
+<tr><td>где выполняется</td><td>только на сервере</td><td>на сервере для первого HTML и в браузере (гидратация, обновления)</td></tr>
+<tr><td>JS в браузер</td><td>не отправляется</td><td>отправляется</td></tr>
+<tr><td>может</td><td><code>async/await</code>, читать cookie, ходить в API и БД, использовать секреты</td><td><code>useState</code>, <code>useEffect</code>, обработчики событий, <code>window</code></td></tr>
+<tr><td>не может</td><td>хуки состояния, обработчики, браузерные API</td><td>быть <code>async</code>, читать серверные секреты</td></tr>
+</table></div>
+<p>Правила границы:</p>
+<ul>
+  <li><code>'use client'</code> ставится в начале файла и делает клиентским этот модуль и всё, что он импортирует;</li>
+  <li>серверный компонент может рендерить клиентский и передавать ему <b>сериализуемые</b> props (строки, числа, объекты, server actions), но не обычные функции и не компоненты;</li>
+  <li>клиентский может получать серверный как <code>children</code>;</li>
+  <li>пакет <code>server-only</code>: импорт такого модуля из клиентского кода ломает сборку - защита от утечки серверного кода.</li>
+</ul>
+<div class="def"><b>Определение.</b> <b>Server Action</b> (<code>'use server'</code>) - асинхронная функция, которая выполняется на сервере, но вызывается из клиентского кода как обычная функция. Под капотом браузер делает POST-запрос.</div>
+<div class="key"><b>В нашем коде.</b>
+<br>Серверные: все <code>page.jsx</code>, <code>layout.jsx</code>, <code>StudentsTable</code>, <code>RoleBadge</code>, <code>Forbidden</code>.
+<br>Клиентские: <code>Navigation</code> (меню-бургер), <code>LoginForm</code>, <code>RegisterForm</code>, <code>StudentForm</code>, <code>StudentFilters</code>, <code>StudentSearch</code>, <code>DeleteStudentButton</code>, <code>LogoutButton</code>, <code>error.jsx</code>.
+<br><code>lib/backend.js</code>, <code>session.js</code>, <code>students.js</code> начинаются с <code>import 'server-only'</code>: адрес Java и токены никогда не попадут в браузерный бандл.
+<br>Server actions в <code>lib/actions/auth.js</code> и <code>lib/actions/students.js</code>. В <code>edit/page.jsx</code> серверная страница передаёт клиентской форме action через <code>updateStudentAction.bind(null, id)</code>.
+<br>Компоненты react-bootstrap с точкой (<code>Card.Header</code>) используются только в клиентских файлах: из серверного компонента нельзя обращаться к свойствам клиентского модуля, поэтому на сервере вёрстка сделана классами Bootstrap.</div>
+<div class="qa"><b>Вопрос:</b> Почему Navigation клиентский, а RoleBadge нет?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Navigation использует usePathname (подсветка активной ссылки) и раскрывающееся меню на телефоне - это состояние и события. RoleBadge просто рисует span по props, ему JS в браузере не нужен.</span></div>
+<div class="qa"><b>Вопрос:</b> Можно ли из серверного компонента передать в клиентский onClick={() =&gt; ...}?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Нет, обычная функция не сериализуется. Можно передать server action или перенести обработчик внутрь клиентского компонента.</span></div>
+
+<!-- 8 -->
+<h2 id="q8"><span class="num">8</span>Файловая маршрутизация. Динамические маршруты, вложенные страницы, layouts</h2>
+<p class="lead">Маршрут = путь папки. Таблица маршрутов не нужна: её строит сам фреймворк.</p>
+<pre><code>src/app/
+  layout.jsx                  общий каркас: html, body, шапка
+  page.jsx                    /            (редирект)
+  not-found.jsx               404 для всего сайта
+  error.jsx                   граница ошибок
+  login/page.jsx              /login
+  register/page.jsx           /register
+  profile/page.jsx            /profile
+  profile/loading.jsx         спиннер профиля
+  session-expired/route.js    GET /session-expired (route handler, без UI)
+  students/page.jsx           /students
+  students/new/page.jsx       /students/new
+  students/[id]/page.jsx      /students/123456
+  students/[id]/edit/page.jsx /students/123456/edit
+  students/[id]/not-found.jsx 404 "студент не найден"</code></pre>
+<div class="tablewrap"><table>
+<tr><th>файл</th><th>роль</th></tr>
+<tr><td><code>page.jsx</code></td><td>делает папку маршрутом</td></tr>
+<tr><td><code>layout.jsx</code></td><td>обёртка для сегмента и всех вложенных; сохраняется при переходах внутри (не перемонтируется)</td></tr>
+<tr><td><code>loading.jsx</code>, <code>error.jsx</code>, <code>not-found.jsx</code></td><td>состояния загрузки, ошибки, 404</td></tr>
+<tr><td><code>route.js</code></td><td>HTTP-обработчик (GET, POST) без страницы</td></tr>
+<tr><td><code>[id]</code></td><td>динамический сегмент, значение приходит в <code>params</code></td></tr>
+<tr><td><code>[...slug]</code>, <code>[[...slug]]</code></td><td>catch-all и необязательный catch-all</td></tr>
+<tr><td><code>(group)</code></td><td>группа маршрутов: папка не попадает в URL</td></tr>
+</table></div>
+<p>Статический сегмент важнее динамического: <code>/students/new</code> попадёт в <code>new/page.jsx</code>, а не в <code>[id]</code>.</p>
+<div class="trap"><b>Ловушка.</b> В Next 15-16 <code>params</code> и <code>searchParams</code> - это Promise: <code>const { id } = await params;</code>.</div>
+<div class="key"><b>В нашем коде.</b> <code>students/[id]/page.jsx</code> получает номер ИСУ из адреса, проверяет формат (6 цифр) и загружает студента. <code>generateMetadata</code> ставит ФИО в заголовок вкладки. Файлы вне соглашений (<code>loadStudent.js</code>) лежат рядом со страницей и маршрутами не становятся.</div>
+<div class="qa"><b>Вопрос:</b> Что будет с layout при переходе с /students на /students/123456?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Корневой layout не перемонтируется и сохраняет состояние (шапку); меняется только содержимое children. Это главное отличие layout от простого компонента-обёртки на каждой странице.</span></div>
+
+<!-- 9 -->
+<h2 id="q9"><span class="num">9</span>Клиентская навигация и prefetching</h2>
+<p class="lead">Первый заход - SSR, дальнейшие переходы - как в SPA, только данные приходят уже отрендеренными.</p>
+<p>Клик по <code>&lt;Link&gt;</code> не перезагружает документ. Роутер Next запрашивает у сервера <b>RSC payload</b> нового маршрута (сериализованное дерево серверных компонентов, а не HTML) и аккуратно вливает его в текущую страницу: общий layout и состояние клиентских компонентов сохраняются.</p>
+<div class="def"><b>Определение.</b> <b>Prefetching</b> - предварительная загрузка следующей страницы до клика. <code>&lt;Link&gt;</code> в продакшене подгружает маршрут, когда ссылка появляется в области видимости; для динамических страниц заранее грузится их статическая часть до ближайшего <code>loading.jsx</code>. Программно: <code>router.prefetch(href)</code>.</div>
+<p>Плюс: переход ощущается мгновенным. Минус: лишний трафик, поэтому для длинных списков ссылок prefetch можно отключить <code>prefetch={false}</code>.</p>
+<div class="tablewrap"><table>
+<tr><th>способ</th><th>когда</th></tr>
+<tr><td><code>&lt;Link href&gt;</code></td><td>обычные ссылки</td></tr>
+<tr><td><code>router.push / replace</code></td><td>переход из кода (после действия)</td></tr>
+<tr><td><code>router.refresh()</code></td><td>перезапросить серверный рендер текущей страницы</td></tr>
+<tr><td><code>redirect()</code></td><td>на сервере: в компоненте, server action, route handler</td></tr>
+</table></div>
+<div class="key"><b>В нашем коде.</b> Все внутренние ссылки - <code>next/link</code>: ФИО в таблице, пагинация, кнопки "К списку". Фильтры и сортировка меняют URL через <code>router.push</code> внутри <code>startTransition</code> (хук <code>useStudentsQuery</code>): пока сервер готовит ответ, старая таблица остаётся на экране, а кнопка "Найти" показывает спиннер. Поиск по ФИО использует <code>router.replace</code>, чтобы каждая буква не попадала в историю браузера.</div>
+<div class="qa"><b>Вопрос:</b> Что передаётся по сети при клиентском переходе в App Router?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Не HTML и не JSON API, а RSC payload: сериализованный результат рендера серверных компонентов со ссылками на клиентские компоненты. Роутер применяет его к текущему дереву.</span></div>
+
+<!-- 10 -->
+<h2 id="q10"><span class="num">10</span>Серверная загрузка данных. Взаимодействие с внешним REST API</h2>
+<p class="lead">Серверный компонент - async-функция: <code>await</code> данные и сразу верни разметку. Ни useEffect, ни состояний loading.</p>
+<pre><code>export default async function ProfilePage() {
+  const user = await readAuthorized((token) =&gt;
+    backendFetch('/api/auth/session/me', { token }));
+  return &lt;ul&gt;...{user.email}...&lt;/ul&gt;;
+}</code></pre>
+<p>Почему это лучше, чем запрос из браузера:</p>
+<ul>
+  <li>сервер Next обычно рядом с API (одна docker-сеть) - запросы быстрые;</li>
+  <li>токены и адрес API не попадают в браузер;</li>
+  <li>нет CORS: запрос сервер-сервер;</li>
+  <li>ответ можно кешировать для всех запросов (Data Cache).</li>
+</ul>
+<div class="key"><b>В нашем коде.</b>
+<br><code>lib/backend.js</code> - функция <code>backendFetch</code>: адрес из переменной окружения <code>API_URL</code> (в Docker <code>http://backend:8080</code>), заголовок <code>Authorization: Bearer</code>, таймаут 15 с через <code>AbortSignal.timeout</code>, ошибки Java <code>{ error: { code, message, details } }</code> превращаются в <code>ApiError</code>.
+<br><code>lib/students.js</code> - <code>listStudents</code> и <code>getStudent</code>: валидация параметров (<code>searchDto</code> из домена ЛР 4), кеш, проверка ответа (<code>pageFromDto</code>, <code>studentFromDto</code>).
+<br>Изменения идут через server actions (<code>createStudentAction</code>, <code>updateStudentAction</code>, <code>deleteStudentAction</code>): они вызывают POST, PATCH, DELETE в Java и проверяют роль.
+<br>Браузер вообще не знает адрес Java: порт 8080 в compose оставлен только для Swagger.</div>
+<div class="qa"><b>Вопрос:</b> Где у вас хранится адрес бэкенда и почему он не в браузере?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> В переменной окружения API_URL, читается в lib/config.js и используется только в server-only модулях. Браузер общается лишь с Next; в бандл адрес не попадает.</span></div>
+
+<!-- 11 -->
+<h2 id="q11"><span class="num">11</span>Последовательная и параллельная загрузка. Request Waterfall</h2>
+<div class="def"><b>Определение.</b> <b>Request waterfall (водопад запросов)</b> - запросы выполняются друг за другом, хотя могли бы идти одновременно. Общее время = сумма, а не максимум.</div>
+<pre><code>// водопад: 300 + 300 = 600 мс
+const student = await getStudent(id);
+const history = await getHistory(id);
+
+// параллельно: max(300, 300) = 300 мс
+const [student, history] = await Promise.all([getStudent(id), getHistory(id)]);</code></pre>
+<p>Последовательно надо только когда второй запрос зависит от результата первого. Типичные источники водопада: <code>await</code> подряд; вложенные компоненты, каждый из которых ждёт свои данные; в SPA - загрузка JS, потом запрос данных, потом ещё запрос по результату.</p>
+<p>Способы борьбы:</p>
+<ul>
+  <li><code>Promise.all</code> для независимых запросов;</li>
+  <li>начать запрос раньше (preload), а <code>await</code> сделать позже;</li>
+  <li>разнести по разным <code>&lt;Suspense&gt;</code>, чтобы части не ждали друг друга;</li>
+  <li>дедупликация: одинаковый запрос в разных компонентах выполнить один раз (<code>cache()</code> React, мемоизация <code>fetch</code> в Next).</li>
+</ul>
+<div class="key"><b>В нашем коде.</b>
+<br><code>loadStudent</code> обёрнут в <code>cache()</code> из React: его вызывают и <code>generateMetadata</code>, и сама страница, но запрос в Java уходит один раз.
+<br><code>getSession</code> тоже в <code>cache()</code>: layout и страница не разбирают cookie дважды.
+<br>На странице списка медленная часть (таблица) вынесена в Suspense, поэтому каркас страницы не ждёт Java.
+<br>По-настоящему зависимые шаги идут последовательно: сначала proxy обновляет токен, потом рендер с этим токеном.</div>
+<div class="qa"><b>Вопрос:</b> Как найти водопад?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Во вкладке Network (или в логах сервера) запросы идут "лесенкой": следующий стартует, когда закончился предыдущий, хотя от него не зависит.</span></div>
+
+<!-- 12 -->
+<h2 id="q12"><span class="num">12</span>Кеширование данных. Cache Hit, Cache Miss и стратегии</h2>
+<div class="def"><b>Определение.</b> <b>Cache hit</b> - нужные данные нашлись в кеше и отданы без обращения к источнику. <b>Cache miss</b> - в кеше нет (или устарело), идём к источнику и обычно сохраняем результат.</div>
+<div class="tablewrap"><table>
+<tr><th>стратегия</th><th>суть</th></tr>
+<tr><td>cache-aside (lazy)</td><td>при miss загрузить и положить в кеш; самая частая</td></tr>
+<tr><td>TTL</td><td>запись живёт заданное время</td></tr>
+<tr><td>stale-while-revalidate</td><td>отдать устаревшее сразу, обновить в фоне</td></tr>
+<tr><td>write-through</td><td>при записи обновить и источник, и кеш</td></tr>
+<tr><td>инвалидация по событию</td><td>после изменения пометить кеш устаревшим</td></tr>
+</table></div>
+<p>Уровни кеша в Next:</p>
+<div class="tablewrap"><table>
+<tr><th>кеш</th><th>где</th><th>что хранит</th></tr>
+<tr><td>Request memoization</td><td>сервер, в пределах одного рендера</td><td>одинаковые <code>fetch</code> и функции в <code>cache()</code></td></tr>
+<tr><td>Data Cache</td><td>сервер, между запросами</td><td>ответы <code>fetch</code> с <code>cache: 'force-cache'</code></td></tr>
+<tr><td>Full Route Cache</td><td>сервер</td><td>готовый HTML статических страниц</td></tr>
+<tr><td>Router Cache</td><td>браузер</td><td>RSC payload посещённых и prefetch-нутых страниц</td></tr>
+</table></div>
+<p>В Next 15-16 <code>fetch</code> по умолчанию <b>не кешируется</b>, кеш включают явно.</p>
+<div class="key"><b>В нашем коде</b> (<code>lib/students.js</code>):
+<pre><code>fetch(url, {
+  cache: 'force-cache',
+  next: { tags: ['students'], revalidate: 30 },   // 30 из STUDENTS_REVALIDATE
+});</code></pre>
+Повторное открытие той же страницы с теми же фильтрами в течение 30 секунд - cache hit, Java не дёргается. Другие фильтры, другая страница или прошло 30 с - miss.
+<br><b>Безопасность.</b> Ключ кеша Next строится из URL, метода и <b>заголовков</b>, в том числе <code>Authorization</code>. Поэтому у каждого токена свои записи: подделанный или чужой токен не получит данные из кеша, будет miss, и Java ответит 401. Мы это проверили: с поддельным токеном данных в HTML нет. Профиль (<code>/session/me</code>) не кешируется вообще (<code>no-store</code>).</div>
+<div class="qa"><b>Вопрос:</b> Почему бы не кешировать список один на всех пользователей?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Тогда данные отдавались бы без проверки токена бэкендом: Next не проверяет подпись JWT. Любой с поддельной cookie получил бы список из кеша. С токеном в ключе каждый miss проходит через Java.</span></div>
+
+<!-- 13 -->
+<h2 id="q13"><span class="num">13</span>Revalidation и инвалидация кеша</h2>
+<div class="def"><b>Определение.</b> <b>Revalidation</b> - обновление закешированных данных. <b>По времени</b>: запись устаревает через N секунд. <b>По событию (on-demand)</b>: код явно говорит "эти данные изменились".</div>
+<div class="tablewrap"><table>
+<tr><th>API Next 16</th><th>что делает</th><th>где можно</th></tr>
+<tr><td><code>next: { revalidate: N }</code></td><td>устаревание через N секунд, обновление по stale-while-revalidate</td><td>в <code>fetch</code></td></tr>
+<tr><td><code>next: { tags: [...] }</code></td><td>метки записи для точечного сброса</td><td>в <code>fetch</code></td></tr>
+<tr><td><code>updateTag(tag)</code></td><td>сразу просрочить; следующий запрос <b>ждёт</b> свежие данные (read-your-own-writes)</td><td>только server actions</td></tr>
+<tr><td><code>revalidateTag(tag, 'max')</code></td><td>пометить устаревшим; отдаётся старое, обновляется в фоне</td><td>server actions, route handlers</td></tr>
+<tr><td><code>revalidatePath(path)</code></td><td>сбросить всё для пути</td><td>server actions, route handlers</td></tr>
+</table></div>
+<p>По времени - просто, но данные могут быть устаревшими до N секунд и сбрасываются, даже если ничего не менялось. По событию - точно, но нужно знать все места изменений. Обычно сочетают: событие для своих изменений, время как страховка от чужих.</p>
+<div class="key"><b>В нашем коде.</b> Оба способа.
+<br>По времени: <code>revalidate: 30</code> - изменения, сделанные мимо нашего фронта (через Swagger или другим админом), появятся максимум через 30 секунд.
+<br>По событию: в <code>lib/actions/students.js</code> после успешного POST, PATCH или DELETE:
+<pre><code>updateTag('students');            // все списки
+updateTag(`student-${isuId}`);    // карточка этого студента</code></pre>
+<code>updateTag</code>, а не <code>revalidateTag</code>, потому что после сохранения нас сразу ведут на карточку или список, и там должны быть уже новые данные, а не старые из фона. Проверено: после изменения комнаты отфильтрованный список сразу показывает новое значение.</div>
+<div class="qa"><b>Вопрос:</b> Чем updateTag отличается от revalidateTag?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> updateTag сразу удаляет запись, и следующий запрос ждёт свежие данные - пользователь видит своё изменение. revalidateTag с профилем 'max' отдаёт старое и обновляет в фоне. updateTag доступен только в server actions.</span></div>
+
+<!-- 14 -->
+<h2 id="q14"><span class="num">14</span>Middleware и защищённые маршруты</h2>
+<p class="lead">Middleware срабатывает на сервере до рендера страницы и может пропустить, перенаправить, переписать запрос или поменять cookie.</p>
+<div class="trap"><b>Важно для защиты.</b> В Next 16 файл <code>middleware.js</code> переименован в <code>proxy.js</code>, функция - <code>proxy</code>. Работает так же; старое имя объявлено устаревшим.</div>
+<pre><code>// src/proxy.js
+export async function proxy(request) {
+  const access = request.cookies.get('lab5_access')?.value;
+  if (isAccessFresh(access)) return NextResponse.next();       // пропустить
+  const pair = await refreshTokens(request.cookies.get('lab5_refresh')?.value);
+  if (!pair) return toLogin(request);                          // на /login?next=...
+  // новые cookie: и в ответ браузеру, и в текущий запрос для рендера
+  ...
+}
+export const config = { matcher: ['/students/:path*', '/profile/:path*'] };</code></pre>
+<h3>Как устроена авторизация</h3>
+<ol>
+  <li>Вход: server action <code>loginAction</code> вызывает Java <code>POST /api/auth/login</code> и кладёт оба токена в cookie <code>lab5_access</code> и <code>lab5_refresh</code> (<code>HttpOnly</code>, <code>SameSite=Lax</code>, <code>Secure</code> по настройке).</li>
+  <li>Каждый переход на защищённую страницу проходит через <code>proxy</code>: нет сессии - редирект на вход с параметром <code>next</code>; access скоро истечёт (меньше 30 с) - обмен refresh на новую пару.</li>
+  <li>Страница ещё раз проверяет сессию (<code>requireSession</code>): proxy не должен быть единственной защитой, его покрытие зависит от <code>matcher</code>.</li>
+  <li>Server action проверяет роль сам (<code>requireAdmin</code>), при 401 обновляет токены и повторяет (<code>actAuthorized</code>).</li>
+  <li>Последняя линия - Java проверяет подпись и роль.</li>
+</ol>
+<div class="trap"><b>Ловушка.</b> Proxy и Next не проверяют подпись JWT, только читают срок и роль. Поэтому никакие данные не отдаются без запроса в Java с этим токеном.</div>
+<div class="key"><b>В нашем коде.</b> Только админу: <code>/students/new</code> и <code>/students/[id]/edit</code> показывают USER-у "у миня нет прав" (<code>Forbidden.jsx</code>), кнопки изменения и удаления не рендерятся. Если Java ответит 401 во время рендера (cookie там менять нельзя), страница уводит на route handler <code>/session-expired</code>, который удаляет cookie и редиректит на вход. Параметр <code>next</code> проверяется <code>safeNext</code>: только пути внутри сайта, защита от open redirect.</div>
+<div class="qa"><b>Вопрос:</b> Почему токены в cookie, а не в памяти браузера, как в ЛР 4?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Рендер идёт на сервере: серверу нужен токен, чтобы сходить в Java. Память браузера ему недоступна, а cookie браузер присылает с каждым запросом. HttpOnly не даёт прочитать её из JS.</span></div>
+<div class="qa"><b>Вопрос:</b> Чем защищены server actions от CSRF?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Next принимает их только POST-ом и сверяет заголовок Origin с Host; плюс cookie SameSite=Lax не уходят с POST-запросами с чужих сайтов.</span></div>
+
+<!-- 15 -->
+<h2 id="q15"><span class="num">15</span>Обработка состояний: Loading, Error, Not Found и HTTP-статусы</h2>
+<div class="tablewrap"><table>
+<tr><th>файл / функция</th><th>что делает</th><th>HTTP-статус</th></tr>
+<tr><td><code>loading.jsx</code></td><td>автоматический Suspense вокруг страницы сегмента</td><td>200 (ответ стримится)</td></tr>
+<tr><td><code>&lt;Suspense&gt;</code></td><td>заглушка для части страницы</td><td>200</td></tr>
+<tr><td><code>error.jsx</code></td><td>граница ошибок сегмента, обязательно <code>'use client'</code>; получает <code>error</code> и <code>reset</code></td><td>500 (если ошибка до начала стриминга)</td></tr>
+<tr><td><code>global-error.jsx</code></td><td>ошибки в корневом layout</td><td>500</td></tr>
+<tr><td><code>notFound()</code> + <code>not-found.jsx</code></td><td>"не найдено"; ближайший not-found.jsx</td><td>404</td></tr>
+<tr><td><code>redirect()</code></td><td>перенаправление</td><td>307 (303 из server action)</td></tr>
+</table></div>
+<p>HTTP-статус важен не только людям: поисковики не индексируют 404, мониторинг считает 500, кеши и прокси ведут себя по-разному.</p>
+<div class="key"><b>В нашем коде.</b>
+<br><b>Загрузка:</b> скелет таблицы через Suspense, <code>profile/loading.jsx</code> со спиннером, спиннеры и <code>disabled</code> на кнопках во время server actions (<code>useTransition</code>).
+<br><b>Ошибка:</b> <code>app/error.jsx</code> - "Что-то пошло не так" и кнопка "Повторить": <code>router.refresh()</code> + <code>reset()</code>. Проверено: остановили Java - страница ошибки, запустили и нажали "Повторить" - таблица вернулась. Неверные параметры в URL (<code>?group=bad</code>) не роняют страницу: таблица показывает предупреждение с текстом ошибки валидации.
+<br><b>404:</b> <code>app/not-found.jsx</code> для неизвестных адресов, <code>students/[id]/not-found.jsx</code> - "Студент не найден". Проверено curl: несуществующий студент - статус <b>404</b>, существующий - 200. Чтобы статус был честным, на странице студента нет <code>loading.jsx</code> (см. вопрос 6).
+<br><b>Прочее:</b> страница за пределами списка (после удаления последнего студента на странице) - <code>redirect</code> на последнюю существующую; ошибки форм - сообщения из <code>getErrorMessage</code> по коду ошибки Java.</div>
+<div class="qa"><b>Вопрос:</b> Почему error.jsx обязан быть клиентским?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Это React Error Boundary, а ему нужно состояние и функция reset для повторной попытки в браузере. Серверные компоненты состояния не имеют.</span></div>
+<div class="qa"><b>Вопрос:</b> Почему с loading.jsx несуществующий студент отдал бы 200?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> loading.jsx включает стриминг: заголовки со статусом 200 уходят сразу вместе со спиннером, а notFound() вызывается позже, когда статус уже не изменить.</span></div>
+
+<!-- defense -->
+<h2 id="defense">Шпаргалка к защите</h2>
+<div class="qa"><b>Вопрос:</b> Расскажи про ЛР 5 за минуту.<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Фронт из ЛР 4 перенесён на Next.js 16 App Router. Страницы рендерятся на сервере, Next ходит в Java-API с токеном из HttpOnly cookie. proxy.js (бывший middleware) не пускает без сессии и обновляет токен. Студенты кешируются в Data Cache с тегами и сроком 30 с, после изменений кеш сбрасывается updateTag. Есть Suspense-стриминг таблицы, error.jsx, not-found с честным 404. Docker: Postgres, Java и Next в режиме standalone.</span></div>
+<div class="qa"><b>Вопрос:</b> CSR против SSR?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> CSR: пустой HTML, всё строит браузер после загрузки JS и данных. SSR: сервер отдаёт HTML с данными, браузер его гидратирует. SSR быстрее показывает контент и лучше для SEO, но нагружает сервер и увеличивает TTFB.</span></div>
+<div class="qa"><b>Вопрос:</b> Что такое гидратация?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> React в браузере проходит по серверному HTML, строит то же дерево и подключает обработчики и состояние к существующим DOM-узлам. Mismatch - когда клиентский рендер не совпал с серверным.</span></div>
+<div class="qa"><b>Вопрос:</b> Как устроен кеш и как он обновляется?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> fetch с cache: 'force-cache', теги students и student-ID, revalidate 30 секунд. После create, update, delete server action вызывает updateTag, и следующий рендер берёт свежие данные. Ключ включает Authorization, поэтому кеш свой у каждого токена.</span></div>
+<div class="qa"><b>Вопрос:</b> Где middleware и что он делает?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> src/proxy.js, в Next 16 middleware называется proxy. На /students и /profile: свежий access - пропуск; нет - обмен refresh на новую пару с записью cookie; не вышло - редирект на /login?next=...</span></div>
+<div class="qa"><b>Вопрос:</b> Как устроены роли?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Роль из JWT. Интерфейс прячет кнопки, страницы new и edit показывают "нет прав", server actions проверяют requireAdmin, а Java всё равно проверяет роль и вернёт 403.</span></div>
+<div class="qa"><b>Вопрос:</b> Что изменилось в Docker по сравнению с ЛР 4?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Вместо nginx со статикой - Node-сервер Next: output: 'standalone' собирает минимальный server.js, многоэтапная сборка deps, build, runtime, запуск от пользователя node. В compose фронт получает API_URL=http://backend:8080 и публикуется на 8081.</span></div>
+
+<footer>Конспект к ЛР 5 по нашему коду (<code>lab5/frontend</code>). Предыдущая часть: <a href="../lab4/theory.html">теория ЛР 4</a>.</footer>
+</main>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var KEY = 'theory-theme';
+  function stored() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function save(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+  var t = stored();
+  if (t === 'light' || t === 'dark') root.setAttribute('data-theme', t);
+  document.getElementById('themeBtn').addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') === 'dark' ||
+      (!root.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    save(next);
+  });
+  var answers = document.querySelectorAll('.qa-ans');
+  answers.forEach(function (el) {
+    el.title = 'Нажми, чтобы показать ответ';
+    function open() { el.classList.add('open'); }
+    el.addEventListener('click', open);
+    el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  var all = document.getElementById('revealAll');
+  all.addEventListener('click', function () {
+    var anyClosed = Array.prototype.some.call(answers, function (el) { return !el.classList.contains('open'); });
+    answers.forEach(function (el) { el.classList.toggle('open', anyClosed); });
+    all.textContent = anyClosed ? 'Скрыть все ответы' : 'Показать все ответы';
+  });
+})();
+</script>
+</body>
+</html>

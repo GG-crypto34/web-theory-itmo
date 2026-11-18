@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Теория ЛР 4</title>
+<style>
+:root {
+  --bg: #f6f1e4; --paper: #fffdf6; --ink: #2b2620; --muted: #6f665a; --line: #e2d8c3;
+  --accent: #8a3b2e; --accent-soft: #f3e2d6; --def: #eef3fb; --def-line: #4a6fa5;
+  --key: #edf6ea; --key-line: #4f8a43; --trap: #fbefe8; --trap-line: #b5532f;
+  --code-bg: #f1ebdc; --qa: #faf6ec;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1a17; --paper: #23211d; --ink: #e9e3d6; --muted: #a69d8e; --line: #3a362f;
+    --accent: #e08a6f; --accent-soft: #3a2a24; --def: #1f2735; --def-line: #7d9fd4;
+    --key: #1f2b1d; --key-line: #86c077; --trap: #33221b; --trap-line: #e08a6f;
+    --code-bg: #2c2924; --qa: #26241f;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1a17; --paper: #23211d; --ink: #e9e3d6; --muted: #a69d8e; --line: #3a362f;
+  --accent: #e08a6f; --accent-soft: #3a2a24; --def: #1f2735; --def-line: #7d9fd4;
+  --key: #1f2b1d; --key-line: #86c077; --trap: #33221b; --trap-line: #e08a6f;
+  --code-bg: #2c2924; --qa: #26241f;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 17px/1.65 Georgia, "Times New Roman", serif;
+}
+.page {
+  max-width: 860px; margin: 24px auto; padding: 32px 44px 60px;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 6px;
+}
+@media (max-width: 700px) { .page { margin: 0; padding: 20px 16px 40px; border: 0; border-radius: 0; } }
+.topbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; font-size: 14px; }
+.topbar a { color: var(--accent); }
+.theme-btn {
+  font: inherit; font-size: 14px; color: var(--ink); background: var(--accent-soft);
+  border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; cursor: pointer;
+}
+header.title { text-align: center; margin: 28px 0 8px; }
+header.title h1 { font-weight: normal; font-size: 32px; margin: 0 0 6px; line-height: 1.25; }
+header.title .sub { font-style: italic; color: var(--muted); margin: 0; }
+header.title .meta { font-variant: small-caps; letter-spacing: .04em; color: var(--muted); font-size: 15px; margin-top: 10px; }
+nav.toc { border: 1px solid var(--line); border-radius: 6px; padding: 14px 20px; margin: 28px 0; columns: 2; column-gap: 28px; }
+@media (max-width: 700px) { nav.toc { columns: 1; } }
+nav.toc a { display: block; color: var(--ink); text-decoration: none; padding: 2px 0; break-inside: avoid; font-size: 15px; }
+nav.toc a:hover { color: var(--accent); }
+nav.toc b { display: block; column-span: all; margin-bottom: 6px; }
+h2 { font-weight: normal; font-size: 25px; margin: 48px 0 10px; padding-top: 16px; border-top: 1px solid var(--line); line-height: 1.3; }
+h2 .num {
+  display: inline-block; min-width: 34px; height: 34px; line-height: 34px; text-align: center;
+  margin-right: 10px; border-radius: 50%; background: var(--accent); color: var(--paper); font-size: 17px;
+}
+h3 { font-size: 19px; margin: 26px 0 6px; color: var(--accent); }
+p.lead { font-style: italic; color: var(--muted); margin-top: 0; }
+a { color: var(--accent); }
+code { font-family: Consolas, "Courier New", monospace; font-size: .86em; background: var(--code-bg); padding: 1px 5px; border-radius: 3px; overflow-wrap: anywhere; }
+pre { background: var(--code-bg); padding: 12px 14px; border-radius: 6px; overflow-x: auto; font-size: 14px; line-height: 1.5; }
+pre code { background: none; padding: 0; font-size: inherit; }
+.def, .key, .trap { padding: 10px 14px; margin: 14px 0; border-left: 4px solid; border-radius: 0 6px 6px 0; }
+.def { background: var(--def); border-color: var(--def-line); }
+.key { background: var(--key); border-color: var(--key-line); }
+.trap { background: var(--trap); border-color: var(--trap-line); }
+.tablewrap { overflow-x: auto; margin: 14px 0; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); font-weight: normal; font-variant: small-caps; letter-spacing: .03em; }
+.qa { background: var(--qa); border: 1px dashed var(--line); border-radius: 6px; padding: 10px 14px; margin: 12px 0; }
+.qa-ans { filter: blur(5px); cursor: pointer; transition: filter .2s; user-select: none; }
+.qa-ans.open { filter: none; user-select: text; cursor: auto; }
+.qa-hint { font-size: 13px; color: var(--muted); }
+.reveal-all { margin-left: 8px; }
+footer { margin-top: 48px; text-align: center; color: var(--muted); font-size: 14px; }
+@media print {
+  body { background: #fff; }
+  .page { border: 0; margin: 0; }
+  .topbar, .qa-hint { display: none; }
+  .qa-ans { filter: none; }
+  h2 { break-before: page; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+
+<div class="topbar">
+  <span><a href="#toc">Содержание</a> | <a href="#defense">Шпаргалка к защите</a> | <a href="../lab5/theory.html">Теория ЛР 5</a></span>
+  <span>
+    <button type="button" class="theme-btn reveal-all" id="revealAll">Показать все ответы</button>
+    <button type="button" class="theme-btn" id="themeBtn">Тема</button>
+  </span>
+</div>
+
+<header class="title">
+  <h1>Лабораторная работа 4: теория</h1>
+  <p class="sub">20 вопросов к защите: React, состояние, RxJS, JWT, безопасность и Docker. В каждой теме есть пример из нашего кода</p>
+  <p class="meta">ИТМО | Веб-программирование | 3 семестр</p>
+</header>
+
+<nav class="toc" id="toc">
+  <b>Содержание</b>
+  <a href="#q1">1. JS-фреймворки: React, Vue, Angular, Svelte</a>
+  <a href="#q2">2. SPA и клиентская маршрутизация</a>
+  <a href="#q3">3. Компоненты, props, события</a>
+  <a href="#q4">4. Жизненный цикл и хуки</a>
+  <a href="#q5">5. Virtual DOM, reconciliation, условный рендеринг</a>
+  <a href="#q6">6. Реактивность во frontend</a>
+  <a href="#q7">7. Локальное и глобальное состояние</a>
+  <a href="#q8">8. Реактивное и императивное программирование</a>
+  <a href="#q9">9. RxJS: Observable, Observer, Subject, Subscription</a>
+  <a href="#q10">10. Операторы RxJS</a>
+  <a href="#q11">11. Hot и cold, подписки, утечки памяти</a>
+  <a href="#q12">12. Поиск, фильтрация, отмена запросов</a>
+  <a href="#q13">13. Валидация, ошибки, загрузка</a>
+  <a href="#q14">14. Аутентификация, JWT, access и refresh</a>
+  <a href="#q15">15. Защита маршрутов и роли</a>
+  <a href="#q16">16. XSS, CSRF и защита клиента</a>
+  <a href="#q17">17. Архитектура frontend-приложения</a>
+  <a href="#q18">18. Docker: образы и контейнеры</a>
+  <a href="#q19">19. Многоэтапная сборка и Nginx</a>
+  <a href="#q20">20. Docker Compose</a>
+  <a href="#defense">Шпаргалка к защите</a>
+</nav>
+
+<!-- 1 -->
+<h2 id="q1"><span class="num">1</span>JavaScript-фреймворки: React, Vue, Angular, Svelte</h2>
+<p class="lead">Фреймворк берёт на себя синхронизацию данных и DOM. Мы описываем, как интерфейс должен выглядеть при данном состоянии, а не как его менять.</p>
+
+<h3>Зачем нужен фреймворк</h3>
+<p>На чистом JS (как в ЛР 1) каждое изменение данных надо вручную переносить в DOM: найти элемент, поменять текст, добавить строку таблицы, не забыть убрать старую. Чем больше экранов и состояний, тем больше таких мест и тем легче ошибиться. Фреймворк даёт:</p>
+<ul>
+  <li><b>декларативный UI</b>: интерфейс описывается как функция от состояния;</li>
+  <li><b>компоненты</b>: интерфейс собирается из независимых переиспользуемых частей;</li>
+  <li><b>реактивность</b>: при изменении данных нужные части перерисовываются сами;</li>
+  <li><b>экосистему</b>: роутер, сторы, сборщик, devtools.</li>
+</ul>
+
+<h3>Сравнение</h3>
+<div class="tablewrap"><table>
+<tr><th></th><th>React</th><th>Vue</th><th>Angular</th><th>Svelte</th></tr>
+<tr><td>что это</td><td>библиотека UI, остальное из экосистемы</td><td>прогрессивный фреймворк</td><td>полный фреймворк "всё в коробке"</td><td>компилятор</td></tr>
+<tr><td>шаблоны</td><td>JSX (JS + разметка)</td><td>HTML-шаблоны с директивами (<code>v-if</code>, <code>v-for</code>)</td><td>HTML-шаблоны, TypeScript обязателен</td><td>HTML-подобные <code>.svelte</code> файлы</td></tr>
+<tr><td>как обновляет DOM</td><td>Virtual DOM + сравнение</td><td>Virtual DOM + точная реактивность через Proxy</td><td>change detection (zone.js), сейчас Signals</td><td>без Virtual DOM: компилятор генерирует точечные обновления</td></tr>
+<tr><td>реактивность</td><td>явная: <code>setState</code> запускает перерисовку</td><td>автоматическая: <code>ref</code>, <code>reactive</code></td><td>Signals, RxJS</td><td>присваивание или руны (<code>$state</code>)</td></tr>
+<tr><td>состояние</td><td>Context, Redux Toolkit, Zustand</td><td>Pinia</td><td>Signals, NgRx</td><td>stores, runes</td></tr>
+<tr><td>порог входа</td><td>средний</td><td>низкий</td><td>высокий</td><td>низкий</td></tr>
+</table></div>
+
+<h3>Почему у нас React</h3>
+<p>Это вариант задания. React даёт JSX, хуки и огромную экосистему: <code>react-router-dom</code> для маршрутов, <code>zustand</code> для глобального состояния, <code>react-bootstrap</code> для вёрстки. Сборка через Vite.</p>
+<div class="key"><b>В нашем коде.</b> Точка входа <code>src/main.jsx</code>: <code>createRoot(...).render(&lt;AuthProvider&gt;&lt;App /&gt;&lt;/AuthProvider&gt;)</code> внутри <code>StrictMode</code>. Маршруты описаны в <code>src/App.jsx</code>.</div>
+
+<div class="qa"><b>Вопрос:</b> React - это фреймворк или библиотека?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Формально библиотека для построения UI: она отвечает только за компоненты и рендер. Маршрутизацию, состояние, запросы добавляют отдельные пакеты. Angular, наоборот, даёт всё сразу.</span></div>
+<div class="qa"><b>Вопрос:</b> Чем Svelte принципиально отличается от React?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Svelte - компилятор: на этапе сборки превращает компоненты в код, который точечно меняет DOM. В рантайме нет Virtual DOM и сравнения деревьев.</span></div>
+
+<!-- 2 -->
+<h2 id="q2"><span class="num">2</span>SPA и клиентская маршрутизация</h2>
+<p class="lead">Одна HTML-страница, а "переходы" между экранами делает JavaScript без перезагрузки документа.</p>
+<div class="def"><b>Определение.</b> <b>SPA (Single Page Application)</b> - приложение, которое загружает один HTML-документ и дальше меняет его содержимое через JS. Данные приходят с сервера в JSON через REST API.</div>
+<div class="def"><b>Определение.</b> <b>MPA (Multi Page Application)</b> - классический сайт: каждый переход запрашивает у сервера новую HTML-страницу целиком.</div>
+
+<div class="tablewrap"><table>
+<tr><th>SPA</th><th>MPA</th></tr>
+<tr><td>быстрые переходы, состояние не теряется</td><td>каждый переход - полная перезагрузка</td></tr>
+<tr><td>медленный первый заход (надо скачать JS)</td><td>первый экран сразу готов</td></tr>
+<tr><td>HTML пустой: плохо для SEO</td><td>HTML с контентом</td></tr>
+<tr><td>сервер отдаёт только JSON</td><td>сервер рендерит страницы</td></tr>
+</table></div>
+
+<h3>Как работает клиентская маршрутизация</h3>
+<ol>
+  <li>Роутер перехватывает клик по ссылке (<code>&lt;Link&gt;</code>) и отменяет обычный переход браузера.</li>
+  <li>Меняет адрес через <b>History API</b>: <code>history.pushState()</code>. Страница не перезагружается.</li>
+  <li>Сопоставляет новый путь с таблицей маршрутов и рендерит нужный компонент.</li>
+  <li>Кнопки "назад/вперёд" вызывают событие <code>popstate</code>, роутер снова выбирает компонент.</li>
+</ol>
+<p>Параметры пути (<code>/students/:isuId</code>) роутер достаёт и отдаёт компоненту через <code>useParams()</code>.</p>
+
+<h3>Запасной index.html на сервере</h3>
+<p>Если пользователь обновит страницу на <code>/students/123456</code>, браузер спросит у сервера именно этот путь. Файла с таким именем нет, поэтому сервер должен на любой неизвестный путь отдавать <code>index.html</code>, а дальше маршрут разберёт роутер в браузере.</p>
+<div class="key"><b>В нашем коде.</b> <code>BrowserRouter</code> и <code>Routes</code> в <code>App.jsx</code>; <code>/</code> перенаправляет на <code>/login</code> через <code>&lt;Navigate&gt;</code>, путь <code>*</code> показывает "страница куда-то делась". На сервере это строка <code>try_files $uri $uri/ /index.html;</code> в <code>nginx.conf</code>.</div>
+
+<div class="qa"><b>Вопрос:</b> Почему после F5 на <code>/students/5</code> без настройки nginx будет 404?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Браузер запросит у сервера файл по этому пути, а его нет. Маршрут существует только в JS-роутере. Нужен fallback на index.html (try_files).</span></div>
+<div class="qa"><b>Вопрос:</b> Чем <code>&lt;Link&gt;</code> отличается от <code>&lt;a href&gt;</code>?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> &lt;a&gt; делает полную перезагрузку страницы и теряет состояние. Link перехватывает клик и меняет адрес через History API, перерисовывая только нужные компоненты.</span></div>
+
+<!-- 3 -->
+<h2 id="q3"><span class="num">3</span>Компонентная архитектура: компоненты, props, события</h2>
+<p class="lead">Компонент - функция, которая получает данные и возвращает разметку.</p>
+<div class="def"><b>Определение.</b> <b>Компонент</b> - независимая часть интерфейса со своей разметкой, логикой и состоянием. В React это функция, возвращающая JSX.</div>
+<div class="def"><b>Определение.</b> <b>Props</b> - входные параметры компонента. Передаются от родителя к ребёнку и внутри ребёнка только читаются.</div>
+<p>Данные в React текут <b>сверху вниз</b> (one-way data flow). Ребёнок не может изменить данные родителя напрямую. Чтобы сообщить наверх о событии, родитель передаёт ребёнку функцию-колбэк, а ребёнок её вызывает. Это и есть "события" между компонентами.</p>
+<pre><code>// родитель                                  // ребёнок
+&lt;StudentFilters                              function StudentFilters({ onApply }) {
+  onNameChange={handleNameChange}              ...
+  onApply={handleApply} /&gt;                    onApply(filters);  // событие наверх
+                                             }</code></pre>
+<p>Для общих данных далеко по дереву используют Context или глобальный стор, чтобы не "пробрасывать" props через много уровней (prop drilling).</p>
+<p><code>children</code> - специальный prop: то, что лежит между тегами компонента. Аналог слотов во Vue.</p>
+<div class="key"><b>В нашем коде.</b> <code>StudentForm</code> получает <code>student</code>, <code>onSubmit</code>, <code>submitting</code>, <code>buttonText</code> и используется и для создания, и для редактирования. <code>ProtectedRoute</code> принимает <code>children</code> и флаг <code>adminOnly</code>. <code>StudentFilters</code> сообщает наверх через <code>onApply</code> и <code>onNameChange</code>.</div>
+<div class="qa"><b>Вопрос:</b> Можно ли изменить prop внутри компонента?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Нет, props только для чтения. Если значение должно меняться, это состояние: либо локальное (useState), либо его хранит родитель и даёт колбэк для изменения.</span></div>
+<div class="qa"><b>Вопрос:</b> Что такое prop drilling?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Передача props через промежуточные компоненты, которым эти данные не нужны, только чтобы донести их вглубь. Решается Context или глобальным стором (у нас zustand для сессии).</span></div>
+
+<!-- 4 -->
+<h2 id="q4"><span class="num">4</span>Жизненный цикл компонентов и хуки</h2>
+<p class="lead">Монтирование, обновления, размонтирование. В функциональных компонентах всё это выражается хуками.</p>
+<h3>Этапы жизни</h3>
+<ol>
+  <li><b>Монтирование</b>: компонент впервые попал в дерево, его DOM вставлен на страницу.</li>
+  <li><b>Обновление</b>: изменились props или состояние, компонент перерисовался.</li>
+  <li><b>Размонтирование</b>: компонент убран из дерева; нужно отписаться от всего, на что подписались.</li>
+</ol>
+<h3>Хуки</h3>
+<div class="tablewrap"><table>
+<tr><th>хук</th><th>зачем</th></tr>
+<tr><td><code>useState</code></td><td>локальное состояние, его изменение вызывает перерисовку</td></tr>
+<tr><td><code>useEffect</code></td><td>побочные эффекты после рендера: подписки, запросы, таймеры</td></tr>
+<tr><td><code>useMemo</code></td><td>запомнить вычисленное значение между рендерами</td></tr>
+<tr><td><code>useCallback</code></td><td>запомнить функцию</td></tr>
+<tr><td><code>useRef</code></td><td>изменяемое значение без перерисовки, ссылка на DOM</td></tr>
+<tr><td><code>useContext</code></td><td>прочитать значение из Context</td></tr>
+<tr><td>свои хуки</td><td>функции <code>useXxx</code>, которые объединяют другие хуки</td></tr>
+</table></div>
+<h3>useEffect и cleanup</h3>
+<pre><code>useEffect(() =&gt; {
+  const subscription = events$.subscribe(handle);   // при монтировании или смене key
+  return () =&gt; subscription.unsubscribe();           // cleanup: перед следующим запуском и при размонтировании
+}, [key]);                                          // зависимости</code></pre>
+<ul>
+  <li>без массива зависимостей: после каждого рендера;</li>
+  <li><code>[]</code>: один раз после монтирования;</li>
+  <li><code>[a, b]</code>: когда изменились a или b.</li>
+</ul>
+<div class="trap"><b>Ловушка.</b> Правила хуков: вызывать только на верхнем уровне компонента или своего хука, не внутри <code>if</code> и циклов. React узнаёт хуки по порядку вызова. У нас это проверяет линтер правилом <code>react/rules-of-hooks</code>.</div>
+<div class="trap"><b>Ловушка.</b> В режиме разработки <code>StrictMode</code> специально монтирует компонент дважды (mount, unmount, mount), чтобы проверить, что cleanup написан правильно.</div>
+<div class="key"><b>В нашем коде.</b> Свои хуки <code>useStudentList</code>, <code>useStudent</code>, <code>useStudentResource</code>. В <code>useStudentResource</code> эффект подписывается на RxJS-поток и в cleanup делает <code>unsubscribe()</code> и <code>removeResource(key)</code>. В <code>EditStudentPage</code> эффект создаёт <code>AbortController</code> и отменяет запрос при уходе со страницы. <code>AuthProvider</code> один раз при монтировании вызывает <code>session.restore()</code>.</div>
+<div class="qa"><b>Вопрос:</b> Что будет, если не вернуть cleanup из эффекта с подпиской?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Подписка переживёт компонент: колбэк продолжит вызываться и писать в стор или state размонтированного компонента. Это утечка памяти и лишние запросы.</span></div>
+
+<!-- 5 -->
+<h2 id="q5"><span class="num">5</span>Рендеринг: Virtual DOM, reconciliation, условный рендеринг</h2>
+<p class="lead">React строит лёгкое описание интерфейса, сравнивает его с прошлым и меняет в DOM только разницу.</p>
+<div class="def"><b>Определение.</b> <b>Virtual DOM</b> - дерево обычных JS-объектов, описывающее интерфейс. Его дёшево создавать заново на каждый рендер, в отличие от настоящего DOM.</div>
+<div class="def"><b>Определение.</b> <b>Reconciliation (согласование)</b> - алгоритм сравнения нового виртуального дерева со старым. По его результату React вносит минимальный набор изменений в реальный DOM (этап commit).</div>
+<p>Упрощения, благодаря которым сравнение линейное, а не кубическое:</p>
+<ul>
+  <li>если у узла сменился тип (<code>div</code> на <code>span</code>, один компонент на другой), поддерево пересоздаётся целиком;</li>
+  <li>элементы списка сопоставляются по <code>key</code>. Ключ должен быть стабильным и уникальным (id), не индекс массива.</li>
+</ul>
+<h3>Условный рендеринг</h3>
+<pre><code>{loading &amp;&amp; &lt;Spinner /&gt;}                         // показать или ничего
+{error ? &lt;Alert&gt;{error}&lt;/Alert&gt; : &lt;Table /&gt;}       // одно из двух
+if (restoring) return &lt;p&gt;вспоминаем...&lt;/p&gt;;      // ранний return</code></pre>
+<div class="trap"><b>Ловушка.</b> <code>{count &amp;&amp; ...}</code> при <code>count === 0</code> выведет на экран "0". Безопаснее <code>{count &gt; 0 &amp;&amp; ...}</code>.</div>
+<div class="key"><b>В нашем коде.</b> В таблице студентов <code>key={student.isuId}</code>. В <code>App.jsx</code> компонент <code>StudentRoute</code> рендерит <code>&lt;StudentDetailsPage key={isuId} /&gt;</code>: при переходе к другому студенту меняется key, и React создаёт компонент заново с чистым состоянием вместо того, чтобы переиспользовать старый.</div>
+<div class="qa"><b>Вопрос:</b> Почему плохо использовать индекс массива как key?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> При удалении или сортировке индексы сдвигаются, и React сопоставит не те элементы: состояние и DOM одной строки достанутся другой, плюс лишние перерисовки.</span></div>
+
+<!-- 6 -->
+<h2 id="q6"><span class="num">6</span>Реактивность во frontend</h2>
+<p class="lead">Реактивность - автоматическое обновление зависимых значений и интерфейса, когда меняются исходные данные.</p>
+<div class="def"><b>Определение.</b> <b>Реактивность</b> - модель, где мы описываем зависимости ("таблица зависит от списка студентов"), а система сама пересчитывает зависимое при изменении источника. Как формула в Excel.</div>
+<h3>Как фреймворки отслеживают изменения</h3>
+<div class="tablewrap"><table>
+<tr><th>подход</th><th>кто</th><th>как</th></tr>
+<tr><td>явный вызов</td><td>React</td><td>новое значение передаётся в <code>setState</code>; React перерисовывает компонент и детей и сравнивает Virtual DOM</td></tr>
+<tr><td>Proxy и трекинг зависимостей</td><td>Vue</td><td>при чтении свойства запоминается, кто его читал; при записи уведомляются только они</td></tr>
+<tr><td>сигналы</td><td>Angular Signals, Solid, Svelte 5</td><td>значение-контейнер с подписчиками, обновление точечное</td></tr>
+<tr><td>компиляция</td><td>Svelte</td><td>компилятор видит присваивания и вставляет код обновления</td></tr>
+<tr><td>потоки</td><td>RxJS</td><td>значения во времени, на которые подписываются</td></tr>
+</table></div>
+<div class="trap"><b>Ловушка.</b> В React состояние неизменяемо. <code>state.items.push(x)</code> не вызовет перерисовку: ссылка на массив та же. Надо создать новый объект: <code>setItems([...items, x])</code>.</div>
+<div class="key"><b>В нашем коде.</b> Три уровня реактивности: <code>useState</code> в компонентах, zustand-сторы (<code>useStore(sessionStore)</code> перерисовывает компонент при изменении сессии) и RxJS-потоки, которые реагируют на смену запроса, видимость вкладки и изменения студентов. В <code>writeResource</code> стор обновляется через новые объекты (<code>{ ...current, ...patch }</code>).</div>
+<div class="qa"><b>Вопрос:</b> Почему React называют "не по-настоящему реактивным"?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Он не отслеживает зависимости автоматически: перерисовка запускается явным setState, а затем React перерисовывает всё поддерево и сравнивает. Vue и сигналы знают точно, что от чего зависит.</span></div>
+
+<!-- 7 -->
+<h2 id="q7"><span class="num">7</span>Управление состоянием: локальное и глобальное</h2>
+<p class="lead">Правило: держать состояние как можно ближе к месту, где оно используется, и поднимать выше только когда оно нужно многим.</p>
+<div class="def"><b>Определение.</b> <b>Локальное состояние</b> принадлежит одному компоненту (<code>useState</code>): открыта ли модалка, идёт ли отправка формы, текст ошибки.</div>
+<div class="def"><b>Определение.</b> <b>Глобальное состояние</b> нужно многим несвязанным компонентам: кто вошёл, его токен и роль, кешированные данные.</div>
+<div class="tablewrap"><table>
+<tr><th>инструмент</th><th>особенности</th></tr>
+<tr><td>Context API</td><td>встроен в React; подходит для редко меняющихся данных; при изменении перерисовывает всех потребителей</td></tr>
+<tr><td>Redux Toolkit</td><td>единый стор, изменения только через actions и reducers; предсказуемо, много шаблонного кода, хорошие devtools</td></tr>
+<tr><td>Zustand</td><td>маленький стор-хук без провайдеров; подписка на часть состояния через селекторы</td></tr>
+</table></div>
+<p>Полезно различать: <b>серверное состояние</b> (кеш данных с бэкенда, может устареть) и <b>клиентское</b> (UI). Для серверного часто берут React Query или SWR; у нас эту роль играют RxJS-поток и <code>studentsStore</code>.</p>
+<div class="key"><b>В нашем коде.</b> Zustand, сторы созданы через <code>createStore</code> из <code>zustand/vanilla</code>, чтобы их можно было читать и вне React (сервис сессии, RxJS):
+<br><code>sessionStore</code>: <code>tokens</code>, <code>user</code>, <code>restoring</code>, сообщения, счётчик <code>generation</code>.
+<br><code>studentsStore</code>: <code>resources</code> - результаты запросов по ключу (loading, data, error).
+<br>Локальное: <code>submitting</code>, <code>message</code>, <code>showConfirm</code>, текущие фильтры и страница в <code>StudentsPage</code>.</div>
+<div class="qa"><b>Вопрос:</b> Почему токен в глобальном состоянии, а флаг отправки формы - в локальном?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Токен и пользователь нужны навигации, защите маршрутов, HTTP-клиенту и страницам. Флаг отправки нужен только самой форме и умирает вместе с ней.</span></div>
+
+<!-- 8 -->
+<h2 id="q8"><span class="num">8</span>Реактивное программирование и императивный подход</h2>
+<p class="lead">Императивно - пошагово говорим "что сделать". Реактивно - объявляем, как одни потоки данных получаются из других.</p>
+<div class="def"><b>Определение.</b> <b>Императивный стиль</b>: последовательность команд, явно меняющих состояние. "Когда пользователь ввёл символ, сбрось таймер, через 300 мс отправь запрос, отмени прошлый, запиши результат".</div>
+<div class="def"><b>Определение.</b> <b>Реактивное программирование</b>: работа с асинхронными потоками событий. Результат описывается как преобразование потока: "поток запросов = поток ввода, с паузой 300 мс, без повторов, с отменой устаревшего".</div>
+<h3>Одна задача двумя способами</h3>
+<pre><code>// императивно
+let timer, controller;
+input.oninput = () =&gt; {
+  clearTimeout(timer);
+  timer = setTimeout(async () =&gt; {
+    controller?.abort();
+    controller = new AbortController();
+    render(await load(input.value, controller.signal));
+  }, 300);
+};
+
+// реактивно
+fromEvent(input, 'input').pipe(
+  map(e =&gt; e.target.value),
+  debounceTime(300),
+  distinctUntilChanged(),
+  switchMap(q =&gt; requestObservable(signal =&gt; load(q, signal))),
+).subscribe(render);</code></pre>
+<p>Реактивный вариант короче, отмена и порядок ответов получаются "бесплатно", а куски цепочки легко переиспользовать. Минус: нужен порог входа и отладка сложнее.</p>
+<div class="key"><b>В нашем коде.</b> Вся логика "когда загружать студентов" вынесена из компонентов в <code>features/students/resourceStream.js</code>. Компонент только отдаёт запрос в поток и рисует результат.</div>
+<div class="qa"><b>Вопрос:</b> Когда реактивный подход избыточен?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Для одиночных действий без комбинирования событий: нажали кнопку, отправили форму, получили ответ. Там хватает async/await.</span></div>
+
+<!-- 9 -->
+<h2 id="q9"><span class="num">9</span>RxJS: Observable, Observer, Subject, BehaviorSubject, Subscription</h2>
+<p class="lead">Observable - это "функция, которая может вернуть много значений во времени", ленивая до подписки.</p>
+<div class="def"><b>Определение.</b> <b>Observable</b> - источник значений во времени. Может выдать сколько угодно <code>next</code>, затем завершиться <code>complete</code> или упасть <code>error</code>. Ленив: ничего не делает, пока на него не подписались.</div>
+<div class="def"><b>Определение.</b> <b>Observer</b> - объект с методами <code>next</code>, <code>error</code>, <code>complete</code>, который получает значения.</div>
+<div class="def"><b>Определение.</b> <b>Subscription</b> - результат <code>subscribe()</code>. Метод <code>unsubscribe()</code> прекращает получение значений и вызывает teardown-функцию источника.</div>
+<div class="def"><b>Определение.</b> <b>Subject</b> - одновременно Observable и Observer: в него можно вручную вызвать <code>next()</code>, и значение получат все текущие подписчики (multicast).</div>
+<div class="tablewrap"><table>
+<tr><th>вид Subject</th><th>что получает новый подписчик</th></tr>
+<tr><td><code>Subject</code></td><td>только будущие значения</td></tr>
+<tr><td><code>BehaviorSubject(initial)</code></td><td>сразу текущее значение, потом будущие; есть <code>.value</code></td></tr>
+<tr><td><code>ReplaySubject(n)</code></td><td>последние n значений</td></tr>
+<tr><td><code>AsyncSubject</code></td><td>только последнее значение после complete</td></tr>
+</table></div>
+<div class="key"><b>В нашем коде.</b>
+<br><code>requestObservable(load)</code> - свой Observable: при подписке запускает запрос с <code>AbortController</code>, а teardown (<code>return () =&gt; controller.abort()</code>) отменяет запрос при отписке.
+<br><code>studentChanges = new Subject()</code> в <code>studentEvents.js</code>: после успешного создания, изменения или удаления <code>studentActions.js</code> вызывает <code>studentChanges.next(isuId)</code>, и все открытые списки перезагружаются.
+<br><code>query$ = new BehaviorSubject(query)</code> в <code>useStudentResource</code>: хранит текущий запрос, новый подписчик сразу его получает.
+<br><code>active$</code> - Observable поверх <code>sessionStore.subscribe</code>: превращает изменения стора в поток.</div>
+<div class="qa"><b>Вопрос:</b> Почему для query$ BehaviorSubject, а не Subject?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Поток подписывается на query$ позже, чем мы туда положили первый запрос. Subject это значение потерял бы, BehaviorSubject отдаёт текущее значение новому подписчику.</span></div>
+<div class="qa"><b>Вопрос:</b> Чем Observable отличается от Promise?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Promise - одно значение, запускается сразу, не отменяется. Observable - много значений, ленивый (стартует при подписке), отменяется через unsubscribe.</span></div>
+
+<!-- 10 -->
+<h2 id="q10"><span class="num">10</span>Операторы RxJS</h2>
+<p class="lead">Оператор - чистая функция: берёт поток и возвращает новый поток. Цепочка собирается через <code>pipe()</code>.</p>
+<div class="tablewrap"><table>
+<tr><th>группа</th><th>операторы</th><th>смысл</th></tr>
+<tr><td>создание</td><td><code>of</code>, <code>from</code>, <code>fromEvent</code>, <code>timer</code>, <code>interval</code>, <code>defer</code>, <code>EMPTY</code></td><td>сделать поток из значения, события, времени</td></tr>
+<tr><td>преобразование</td><td><code>map</code>, <code>scan</code>, <code>switchMap</code>, <code>mergeMap</code>, <code>concatMap</code>, <code>exhaustMap</code></td><td>изменить значения или превратить в новый поток</td></tr>
+<tr><td>фильтрация</td><td><code>filter</code>, <code>distinctUntilChanged</code>, <code>debounceTime</code>, <code>throttleTime</code>, <code>take</code>, <code>takeUntil</code></td><td>пропустить не все значения</td></tr>
+<tr><td>комбинирование</td><td><code>merge</code>, <code>combineLatest</code>, <code>withLatestFrom</code>, <code>startWith</code></td><td>собрать несколько потоков</td></tr>
+<tr><td>ошибки</td><td><code>catchError</code>, <code>retry</code></td><td>перехватить ошибку и продолжить</td></tr>
+<tr><td>multicast</td><td><code>share</code>, <code>shareReplay</code></td><td>один источник на многих подписчиков</td></tr>
+</table></div>
+<h3>Четыре map высшего порядка</h3>
+<div class="tablewrap"><table>
+<tr><th>оператор</th><th>если пришло новое значение, пока старый внутренний поток не закончился</th><th>пример</th></tr>
+<tr><td><code>switchMap</code></td><td>отписаться от старого, взять новый</td><td>поиск: нужен только последний запрос</td></tr>
+<tr><td><code>mergeMap</code></td><td>работать параллельно</td><td>независимые загрузки</td></tr>
+<tr><td><code>concatMap</code></td><td>поставить в очередь</td><td>сохранения по порядку</td></tr>
+<tr><td><code>exhaustMap</code></td><td>игнорировать новое, пока занят</td><td>опрос: не начинать новый запрос, пока не пришёл прошлый</td></tr>
+</table></div>
+<div class="key"><b>В нашем коде</b> (<code>resourceStream.js</code>):
+<br><code>active$.pipe(distinctUntilChanged(), switchMap(observeSession))</code> - при выходе из аккаунта весь поток загрузок отменяется.
+<br><code>query$.pipe(distinctUntilChanged(sameQuery), switchMap(observeQuery))</code> - одинаковые запросы не повторяются, новый запрос отменяет старый.
+<br><code>timer(delay)</code> - задержка 300 мс только при смене ФИО (свой debounce).
+<br><code>merge(timer(0, pollInterval), changes$).pipe(exhaustMap(...))</code> - опрос каждые 5 секунд плюс внеочередная загрузка после изменений, без наложения запросов.
+<br><code>visible$.pipe(switchMap(...))</code> - на скрытой вкладке опрос останавливается (<code>EMPTY</code>).
+<br><code>map</code>, <code>catchError</code>, <code>startWith({ kind: 'loading' })</code> - превращают запрос в события loading, data, error.</div>
+<div class="qa"><b>Вопрос:</b> Почему для опроса exhaustMap, а не switchMap?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Если сервер отвечает дольше интервала, switchMap отменял бы каждый запрос и данные никогда бы не пришли. exhaustMap дожидается текущего запроса и пропускает тики, пришедшие в это время.</span></div>
+<div class="qa"><b>Вопрос:</b> Зачем catchError внутри switchMap, а не в конце цепочки?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Ошибка завершает поток. Если поймать её в конце, весь внешний поток умрёт и опрос прекратится. Внутри switchMap умирает только один запрос, а ошибка превращается в событие { kind: 'error' }.</span></div>
+
+<!-- 11 -->
+<h2 id="q11"><span class="num">11</span>Асинхронные потоки: hot и cold, подписки, утечки памяти</h2>
+<div class="def"><b>Определение.</b> <b>Cold Observable</b> создаёт источник заново для каждого подписчика. Два подписчика на HTTP-запрос - два запроса.</div>
+<div class="def"><b>Определение.</b> <b>Hot Observable</b> имеет общий источник, который существует независимо от подписчиков. Опоздавший подписчик пропустит прошлые значения. Примеры: события DOM, Subject.</div>
+<p>Холодный поток делают горячим (общим) операторами <code>share()</code> и <code>shareReplay()</code>.</p>
+<h3>Утечки памяти</h3>
+<p>Подписка держит ссылки на колбэки, а через них на компоненты. Если не отписаться, компонент не соберётся сборщиком мусора, а колбэк продолжит работать: таймеры тикают, запросы идут.</p>
+<ul>
+  <li>отписываться в cleanup <code>useEffect</code>;</li>
+  <li>использовать операторы, которые сами завершают поток: <code>take</code>, <code>takeUntil</code>, <code>switchMap</code> (отписывается от старого);</li>
+  <li>в teardown собственного Observable освобождать ресурсы.</li>
+</ul>
+<div class="key"><b>В нашем коде.</b> <code>requestObservable</code> - холодный: каждый подписчик запускает свой запрос. <code>studentChanges</code> (Subject) и <code>fromEvent(document, 'visibilitychange')</code> - горячие. В <code>useStudentResource</code> cleanup эффекта делает <code>subscription.unsubscribe()</code>: отписка проходит по всей цепочке, <code>switchMap</code> отписывается от внутренних потоков, и teardown <code>requestObservable</code> вызывает <code>controller.abort()</code>. Таймер опроса тоже останавливается.</div>
+<div class="qa"><b>Вопрос:</b> Таймер опроса и fromEvent - это утечка, если уйти со страницы?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Нет, если отписаться: unsubscribe убирает обработчик visibilitychange и останавливает timer. Утечка была бы, если бы подписку не сохранили и не отменили в cleanup.</span></div>
+
+<!-- 12 -->
+<h2 id="q12"><span class="num">12</span>Реактивная обработка событий: поиск, фильтрация, отмена устаревших запросов</h2>
+<h3>Три проблемы живого поиска</h3>
+<ol>
+  <li><b>Слишком много запросов</b>: запрос на каждую букву. Решение: debounce, ждать паузу во вводе.</li>
+  <li><b>Повторы</b>: тот же запрос ещё раз. Решение: <code>distinctUntilChanged</code>.</li>
+  <li><b>Гонка ответов (race condition)</b>: ответ на старый запрос "Ива" пришёл после ответа на "Иван" и перезаписал его. Решение: <code>switchMap</code> отменяет устаревший запрос.</li>
+</ol>
+<h3>Наш поток</h3>
+<pre><code>query$ (BehaviorSubject: фильтры, ФИО, сортировка, страница)
+  -&gt; distinctUntilChanged(sameQuery)        без повторов
+  -&gt; switchMap(query =&gt;
+       timer(ФИО изменилось ? 300 : 0)      debounce только для ввода текста
+       -&gt; switchMap(опрос: каждые 5 с + studentChanges)
+            -&gt; exhaustMap(запрос с AbortController)
+     )</code></pre>
+<h3>Как отменяется запрос</h3>
+<p>Когда приходит новый запрос, <code>switchMap</code> отписывается от предыдущего внутреннего потока. Отписка вызывает teardown <code>requestObservable</code>, тот вызывает <code>controller.abort()</code>, и <code>fetch</code> обрывается с <code>AbortError</code>. Сеть освобождается, а старый ответ точно не попадёт в интерфейс.</p>
+<div class="key"><b>В нашем коде.</b> Фильтры в <code>StudentsPage</code> - состояние; через <code>useMemo</code> собирается объект запроса и отдаётся в <code>useStudentList</code>, а тот кладёт его в <code>query$.next(query)</code>. При смене фильтров страница сбрасывается на 1.</div>
+<div class="qa"><b>Вопрос:</b> Что такое race condition в поиске?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Ответы приходят не в том порядке, в котором ушли запросы, и старый результат перезаписывает новый. switchMap игнорирует и отменяет всё, кроме последнего запроса.</span></div>
+
+<!-- 13 -->
+<h2 id="q13"><span class="num">13</span>Клиентская валидация, обработка ошибок, состояния загрузки</h2>
+<h3>Валидация</h3>
+<p>Клиентская валидация - для удобства: ошибка видна сразу, без запроса. Защищает данные только серверная валидация, потому что клиент можно обойти.</p>
+<ul>
+  <li>HTML-атрибуты: <code>required</code>, <code>min</code>, <code>max</code>, <code>minLength</code>, <code>pattern</code>, <code>type="email"</code>. Браузер не даст отправить форму (Constraint Validation API).</li>
+  <li>Проверка в JS перед отправкой: <code>studentDto()</code> и <code>searchDto()</code> в <code>domain/student.js</code> повторяют правила бэкенда (ИСУ 6 цифр, группа <code>[A-Z][0-9]{4}</code>, дата не раньше 2000-01-01, длина ФИО 5-100).</li>
+</ul>
+<h3>Ошибки</h3>
+<p>Бэкенд возвращает ошибку в едином формате <code>{ error: { code, message, details } }</code>. <code>baseHttpClient</code> превращает её в <code>ApiError</code> со статусом и кодом, а <code>getErrorMessage()</code> из <code>shared/errors.js</code> по коду выбирает понятный текст.</p>
+<div class="tablewrap"><table>
+<tr><th>ситуация</th><th>как обработано</th></tr>
+<tr><td>401, токен истёк</td><td><code>authorizedClient</code> обновляет токен и повторяет запрос; не вышло - "Сессия истекла"</td></tr>
+<tr><td>403</td><td>"Недостаточно прав"</td></tr>
+<tr><td>404 студента</td><td>"Студент удалён или не существует"</td></tr>
+<tr><td>422 валидация</td><td>список полей с ошибками из <code>details</code></td></tr>
+<tr><td>409 конфликт</td><td>"Студент с таким ИСУ уже существует"</td></tr>
+<tr><td>сервер недоступен, таймаут</td><td>коды <code>NETWORK_ERROR</code>, <code>TIMEOUT</code> (таймаут 15 с через <code>AbortController</code>)</td></tr>
+<tr><td>500</td><td>"Внутренняя ошибка сервера"</td></tr>
+</table></div>
+<h3>Индикация загрузки и защита от повторной отправки</h3>
+<p>Пока идёт запрос: <code>Spinner</code>, текст кнопки "Сохраняем...", кнопка <code>disabled</code>. В обработчике ещё и проверка <code>if (submitting) return;</code> - на случай, если событие пришло до перерисовки.</p>
+<div class="qa"><b>Вопрос:</b> Если есть валидация на сервере, зачем на клиенте?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Для UX: мгновенная обратная связь и меньше лишних запросов. Для безопасности клиентская проверка ничего не даёт, её можно обойти через curl.</span></div>
+
+<!-- 14 -->
+<h2 id="q14"><span class="num">14</span>Аутентификация и авторизация. JWT, access и refresh</h2>
+<div class="def"><b>Определение.</b> <b>Аутентификация</b> - проверка, кто ты (логин и пароль). <b>Авторизация</b> - проверка, что тебе можно (роль USER или ADMIN).</div>
+<div class="def"><b>Определение.</b> <b>JWT (JSON Web Token)</b> - строка <code>header.payload.signature</code> в base64url. Payload содержит claims: <code>sub</code> (логин), <code>roles</code>, <code>exp</code> (срок), <code>iss</code>, <code>aud</code>. Подпись (у нас HS256) позволяет серверу проверить, что токен не подделан, без обращения к базе.</div>
+<div class="trap"><b>Ловушка.</b> JWT подписан, но не зашифрован. Payload читается кем угодно, поэтому секретов туда не кладут.</div>
+<h3>Access и refresh</h3>
+<div class="tablewrap"><table>
+<tr><th></th><th>access</th><th>refresh</th></tr>
+<tr><td>зачем</td><td>прикладывается к каждому запросу в <code>Authorization: Bearer ...</code></td><td>только чтобы получить новую пару</td></tr>
+<tr><td>срок</td><td>короткий, 15 минут</td><td>длинный, 7 дней</td></tr>
+<tr><td>формат</td><td>JWT, проверяется без базы</td><td>случайная строка, хеш лежит в БД</td></tr>
+<tr><td>отзыв</td><td>нельзя, ждём истечения</td><td>можно: удалить из БД (logout)</td></tr>
+</table></div>
+<p>Короткий access ограничивает ущерб от утечки, refresh позволяет не вводить пароль каждые 15 минут. При каждом обновлении выдаётся новый refresh, старый отзывается (rotation).</p>
+<div class="key"><b>В нашем коде.</b>
+<br>Access-токен хранится <b>только в памяти</b> (<code>sessionStore</code>), не в localStorage.
+<br>Refresh-токен бэкенд кладёт в cookie <code>lab4_refresh</code>: <code>HttpOnly</code> (JS не прочитает), <code>SameSite=Strict</code>, <code>Path=/api/auth/session</code> (уходит только на эндпоинты сессии).
+<br>При старте <code>session.restore()</code> вызывает <code>/api/auth/session/refresh</code> и восстанавливает вход после F5.
+<br><code>authorizedClient</code> на 401 делает один refresh и повторяет запрос. <code>sessionService</code> не допускает двух параллельных refresh (общий promise), а счётчик <code>generation</code> отбрасывает ответы, пришедшие после выхода или смены пользователя.
+<br>Роль для интерфейса берётся из payload через <code>userFromToken()</code>.</div>
+<div class="qa"><b>Вопрос:</b> Почему access не в localStorage?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> localStorage доступен любому скрипту на странице: при XSS токен украдут. В памяти он живёт до перезагрузки, а восстанавливается через HttpOnly refresh-cookie, недоступную JS.</span></div>
+<div class="qa"><b>Вопрос:</b> Как сделать выход, если JWT нельзя отозвать?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Отозвать refresh в БД и забыть access на клиенте. Украденный access проживёт максимум до своего exp, поэтому он короткий.</span></div>
+
+<!-- 15 -->
+<h2 id="q15"><span class="num">15</span>Защита маршрутов и разграничение доступа по ролям</h2>
+<p class="lead">Клиентская защита - это UX, настоящая защита на сервере.</p>
+<ul>
+  <li><b>Охрана маршрута</b>: компонент-обёртка проверяет сессию и роль до рендера страницы, иначе перенаправляет на вход или показывает "нет прав".</li>
+  <li><b>Скрытие элементов</b>: кнопки, которые пользователю недоступны, не рендерятся.</li>
+  <li><b>Сервер</b> проверяет роль на каждом запросе. Даже если кто-то вручную вызовет DELETE, Spring Security вернёт 403.</li>
+</ul>
+<div class="key"><b>В нашем коде.</b> <code>ProtectedRoute</code>: пока сессия восстанавливается - "вспоминаем, кто зашёл..."; нет токена - <code>&lt;Navigate to="/login" replace /&gt;</code>; <code>adminOnly</code> и роль не ADMIN - "у миня нет прав". Только для админа: <code>/students/new</code> и <code>/students/:isuId/edit</code>. В <code>Navigation</code>, <code>StudentsPage</code>, <code>StudentDetailsPage</code> кнопки создания, изменения и удаления показываются при <code>user.role === 'ADMIN'</code>. В <code>SecurityConfig</code> бэкенда: GET студентов - USER и ADMIN, POST, PATCH, DELETE - только ADMIN.</div>
+<div class="qa"><b>Вопрос:</b> Достаточно ли спрятать кнопку "Удалить" от USER?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Нет. Запрос можно отправить вручную с токеном USER. Защищает проверка роли на сервере, скрытие кнопки только убирает лишнее из интерфейса.</span></div>
+<div class="qa"><b>Вопрос:</b> Зачем replace в Navigate?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Чтобы защищённый адрес не остался в истории: иначе кнопка "назад" со страницы входа снова отправит на защищённую страницу и опять на вход.</span></div>
+
+<!-- 16 -->
+<h2 id="q16"><span class="num">16</span>Безопасность frontend: XSS, CSRF</h2>
+<div class="def"><b>Определение.</b> <b>XSS (Cross-Site Scripting)</b> - внедрение чужого скрипта на страницу: например, в поле "примечания" сохранили <code>&lt;img src=x onerror=...&gt;</code>, и он выполнился у другого пользователя. Скрипт работает от имени жертвы: читает токены, шлёт запросы.</div>
+<p>Защита от XSS:</p>
+<ul>
+  <li>экранирование вывода: React по умолчанию выводит <code>{text}</code> как текст, а не как HTML;</li>
+  <li>не использовать <code>dangerouslySetInnerHTML</code> и <code>innerHTML</code> с пользовательскими данными;</li>
+  <li>не хранить токены там, где их достанет JS (localStorage); HttpOnly cookie;</li>
+  <li>Content-Security-Policy запрещает инлайновые и чужие скрипты.</li>
+</ul>
+<div class="def"><b>Определение.</b> <b>CSRF (Cross-Site Request Forgery)</b> - чужой сайт заставляет браузер жертвы отправить запрос на наш сайт. Браузер сам приложит cookie, и запрос пройдёт от имени жертвы.</div>
+<p>Защита от CSRF:</p>
+<ul>
+  <li><code>SameSite=Strict</code> или <code>Lax</code> у cookie: браузер не отправит её с запросом с чужого сайта;</li>
+  <li>CSRF-токен или обязательный кастомный заголовок: чужой сайт не может добавить заголовок к запросу без разрешения CORS;</li>
+  <li>проверка заголовков <code>Origin</code> и <code>Referer</code>.</li>
+</ul>
+<p>Связь: при авторизации через заголовок <code>Authorization</code> CSRF не страшен (чужой сайт не знает токен), но страшен XSS. При cookie наоборот. Поэтому мы комбинируем.</p>
+<div class="key"><b>В нашем коде.</b> Нигде нет <code>dangerouslySetInnerHTML</code>, примечания выводятся как текст. Access в памяти и уходит в заголовке. Refresh-cookie: <code>HttpOnly</code> + <code>SameSite=Strict</code> + узкий <code>Path</code>. Бэкенд требует заголовок <code>X-Requested-With: XMLHttpRequest</code> на <code>/api/auth/session/*</code>, иначе 403 <code>FORBIDDEN_REQUEST</code>. CORS разрешает только наши origin и не разрешает credentials для чужих сайтов.</div>
+<div class="qa"><b>Вопрос:</b> Почему кастомный заголовок защищает от CSRF?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> HTML-форма или картинка с чужого сайта не может добавить заголовок, а fetch с нестандартным заголовком на другой origin требует preflight, который наш CORS не пропустит.</span></div>
+
+<!-- 17 -->
+<h2 id="q17"><span class="num">17</span>Архитектура frontend-приложения</h2>
+<p class="lead">Разделение ответственности: каждый слой знает только о соседнем снизу.</p>
+<div class="tablewrap"><table>
+<tr><th>папка</th><th>ответственность</th></tr>
+<tr><td><code>api/http/</code></td><td>транспорт: <code>fetchTransport</code>, <code>baseHttpClient</code> (URL, JSON, таймаут, ошибки), <code>authorizedClient</code> (Bearer и повтор на 401)</td></tr>
+<tr><td><code>api/</code></td><td>REST-эндпоинты: <code>authApi</code>, <code>studentsApi</code></td></tr>
+<tr><td><code>domain/</code></td><td>модель и правила: валидация студента, DTO, разбор JWT</td></tr>
+<tr><td><code>auth/</code></td><td>сервис сессии: вход, выход, refresh, восстановление</td></tr>
+<tr><td><code>state/</code></td><td>zustand-сторы</td></tr>
+<tr><td><code>features/students/</code></td><td>реактивная логика: потоки, события, действия</td></tr>
+<tr><td><code>hooks/</code></td><td>мост между потоками и React</td></tr>
+<tr><td><code>components/</code>, <code>pages/</code></td><td>только отображение</td></tr>
+<tr><td><code>app/services.js</code></td><td>composition root: создаёт клиенты и сервисы и связывает их</td></tr>
+</table></div>
+<p>Плюсы: логику можно тестировать без React, транспорт подменять (<code>createHttpClient({ transport })</code>), компоненты остаются простыми. Зависимости передаются через параметры фабрик (<code>createStudentsApi(request)</code>) - это внедрение зависимостей.</p>
+<p>Другие подходы: деление по фичам (feature-sliced design), атомарный дизайн для компонентов, MVVM.</p>
+<div class="qa"><b>Вопрос:</b> Где у вас бизнес-правила, а где отображение?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Правила (валидация, формат данных) в domain, работа с сетью в api, сессия в auth, когда загружать - в features. Страницы и компоненты только рисуют и вызывают эти функции.</span></div>
+
+<!-- 18 -->
+<h2 id="q18"><span class="num">18</span>Docker: Dockerfile, образы, контейнеры</h2>
+<div class="def"><b>Определение.</b> <b>Образ (image)</b> - неизменяемый шаблон: файловая система с приложением и зависимостями, состоящая из слоёв.</div>
+<div class="def"><b>Определение.</b> <b>Контейнер</b> - запущенный экземпляр образа: изолированный процесс со своей файловой системой, сетью и переменными окружения. Ядро ОС общее с хостом, поэтому контейнер легче виртуальной машины.</div>
+<div class="def"><b>Определение.</b> <b>Dockerfile</b> - инструкции сборки образа. Каждая инструкция (<code>FROM</code>, <code>COPY</code>, <code>RUN</code>) - новый слой; неизменённые слои берутся из кеша.</div>
+<div class="tablewrap"><table>
+<tr><th>инструкция</th><th>смысл</th></tr>
+<tr><td><code>FROM</code></td><td>базовый образ</td></tr>
+<tr><td><code>WORKDIR</code></td><td>рабочая папка</td></tr>
+<tr><td><code>COPY</code></td><td>скопировать файлы в образ</td></tr>
+<tr><td><code>RUN</code></td><td>выполнить команду при сборке</td></tr>
+<tr><td><code>ENV</code></td><td>переменная окружения</td></tr>
+<tr><td><code>EXPOSE</code></td><td>документирует порт</td></tr>
+<tr><td><code>CMD</code>, <code>ENTRYPOINT</code></td><td>что запускать при старте контейнера</td></tr>
+</table></div>
+<div class="trap"><b>Ловушка.</b> Порядок важен для кеша: сначала <code>COPY package.json package-lock.json</code> и <code>npm ci</code>, потом остальной код. Тогда при правке исходников зависимости не переустанавливаются.</div>
+<div class="key"><b>В нашем коде.</b> <code>frontend/Dockerfile</code> так и сделан. <code>.dockerignore</code> не пускает в образ <code>node_modules</code>, <code>dist</code> и <code>.env</code>.</div>
+<div class="qa"><b>Вопрос:</b> Чем контейнер отличается от виртуальной машины?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> ВМ эмулирует железо и запускает свою ОС. Контейнер - изолированный процесс на общем ядре хоста: стартует за секунды и весит мегабайты.</span></div>
+
+<!-- 19 -->
+<h2 id="q19"><span class="num">19</span>Многоэтапная сборка и раздача статики через Nginx</h2>
+<p class="lead">Собираем в одном образе, запускаем в другом. В итоговый образ попадает только результат.</p>
+<pre><code>FROM node:22-alpine AS build        # этап 1: есть node и все dev-зависимости
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build                   # vite собирает dist/
+
+FROM nginx:stable-alpine            # этап 2: только nginx и готовая статика
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist/ /usr/share/nginx/html/</code></pre>
+<p>Зачем: итоговый образ весит десятки мегабайт вместо сотен, в нём нет исходников, node_modules и инструментов сборки, меньше поверхность атаки.</p>
+<p>После <code>vite build</code> React-приложение - это просто статические файлы (HTML, JS, CSS). Для них не нужен Node: достаточно веб-сервера.</p>
+<h3>Nginx у нас делает две вещи</h3>
+<pre><code>location /api/ { proxy_pass http://backend:8080; }   # reverse proxy на Java
+location /     { try_files $uri $uri/ /index.html; } # SPA fallback</code></pre>
+<p>Проксирование <code>/api</code> даёт <b>один origin</b> для фронта и API: не нужен CORS, cookie работают как first-party, а <code>SameSite=Strict</code> не мешает. В разработке ту же роль играет <code>server.proxy</code> в <code>vite.config.js</code>.</p>
+<div class="qa"><b>Вопрос:</b> Что даёт proxy_pass по сравнению с прямым запросом браузера на :8080?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Один origin: нет CORS и preflight, cookie сессии отправляются автоматически, бэкенд можно не открывать наружу, адрес бэкенда не зашит во фронт.</span></div>
+
+<!-- 20 -->
+<h2 id="q20"><span class="num">20</span>Docker Compose: сети, переменные окружения, связь frontend и backend</h2>
+<div class="def"><b>Определение.</b> <b>Docker Compose</b> описывает несколько контейнеров одного приложения в <code>docker-compose.yml</code> и поднимает их одной командой <code>docker compose up --build</code>.</div>
+<ul>
+  <li><b>Сеть</b>: compose создаёт общую сеть, и контейнеры находят друг друга по имени сервиса (встроенный DNS). Поэтому в nginx адрес <code>http://backend:8080</code>, а в бэкенде <code>jdbc:postgresql://db:5432/students</code>.</li>
+  <li><b>ports</b>: проброс порта наружу, <code>"127.0.0.1:8081:80"</code> - только для локальной машины.</li>
+  <li><b>depends_on</b> с <code>condition: service_healthy</code>: бэкенд стартует после того, как healthcheck базы (<code>pg_isready</code>) прошёл.</li>
+  <li><b>volumes</b>: <code>postgres_data</code> хранит базу между перезапусками; SQL-скрипты из <code>docker-entrypoint-initdb.d</code> выполняются при первом создании базы.</li>
+  <li><b>Переменные окружения</b>: секреты в <code>.env</code> (в git не попадает), пример в <code>.env.example</code>. <code>${DB_PASSWORD:?...}</code> - обязательная переменная, без неё compose не запустится; <code>${COOKIE_SECURE:-false}</code> - значение по умолчанию.</li>
+</ul>
+<div class="trap"><b>Ловушка.</b> Пароль базы применяется только при первом создании тома. Сменили <code>DB_PASSWORD</code> - нужно <code>docker compose down -v</code>, иначе "password authentication failed".</div>
+<div class="trap"><b>Ловушка.</b> Переменные <code>VITE_*</code> подставляются в код при <b>сборке</b>, а не при запуске контейнера: статике неоткуда читать окружение в рантайме.</div>
+<div class="key"><b>В нашем коде.</b> Три сервиса: <code>db</code> (postgres:17-alpine), <code>backend</code> (Spring Boot), <code>frontend</code> (nginx со статикой). Браузер ходит на <code>localhost:8081</code>, nginx проксирует <code>/api</code> в <code>backend:8080</code>.</div>
+<div class="qa"><b>Вопрос:</b> Почему в nginx.conf написано backend, а не localhost?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> localhost внутри контейнера - это сам контейнер nginx. Бэкенд в другом контейнере, и в сети compose он доступен по имени сервиса.</span></div>
+
+<!-- defense -->
+<h2 id="defense">Шпаргалка к защите</h2>
+<div class="qa"><b>Вопрос:</b> Расскажи про приложение за минуту.<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> SPA на React 19 + Vite. Маршруты react-router, вёрстка react-bootstrap. Глобальное состояние в zustand: сессия и кеш загрузок. Загрузка студентов - RxJS-поток с debounce поиска, отменой устаревших запросов, опросом раз в 5 секунд и паузой на скрытой вкладке. JWT: access в памяти, refresh в HttpOnly cookie. В Docker три контейнера: Postgres, Spring Boot и nginx, который раздаёт статику и проксирует /api.</span></div>
+<div class="qa"><b>Вопрос:</b> Где у вас RxJS и почему не просто useEffect?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> features/students/resourceStream.js. Там сочетаются несколько источников: смена запроса, таймер опроса, видимость вкладки, изменения после CRUD и сессия. Через switchMap, exhaustMap и merge это описывается декларативно и с правильной отменой; на useEffect вышла бы гора таймеров и флагов.</span></div>
+<div class="qa"><b>Вопрос:</b> Как список узнаёт, что студента удалили на другой странице?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> deleteStudent после ответа сервера делает studentChanges.next(id). Поток списка слушает studentChanges через merge и внепланово перезагружается.</span></div>
+<div class="qa"><b>Вопрос:</b> Что будет при истечении access-токена посреди работы?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Запрос вернёт 401, authorizedClient вызовет session.refresh (один на всех ожидающих), получит новый access через cookie и повторит запрос. Если refresh тоже истёк - сессия очищается и показывается "Сессия истекла".</span></div>
+<div class="qa"><b>Вопрос:</b> Как защищены от XSS и CSRF?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> XSS: React экранирует вывод, нет dangerouslySetInnerHTML, access не в localStorage, refresh HttpOnly. CSRF: refresh-cookie SameSite=Strict с узким Path, обязательный X-Requested-With на эндпоинтах сессии, остальные запросы с Bearer-заголовком.</span></div>
+<div class="qa"><b>Вопрос:</b> Зачем multi-stage build?<br><b>Ответ:</b> <span class="qa-ans" tabindex="0"> Node и зависимости нужны только для сборки. В финальный образ попадают nginx и папка dist: он маленький и без лишнего.</span></div>
+
+<footer>Конспект к ЛР 4 по нашему коду (<code>lab4/frontend</code>, <code>lab4/backend</code>). Следующая часть: <a href="../lab5/theory.html">теория ЛР 5</a>.</footer>
+</main>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var KEY = 'theory-theme';
+  function stored() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function save(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+  var t = stored();
+  if (t === 'light' || t === 'dark') root.setAttribute('data-theme', t);
+  document.getElementById('themeBtn').addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') === 'dark' ||
+      (!root.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    save(next);
+  });
+  var answers = document.querySelectorAll('.qa-ans');
+  answers.forEach(function (el) {
+    el.title = 'Нажми, чтобы показать ответ';
+    function open() { el.classList.add('open'); }
+    el.addEventListener('click', open);
+    el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  var all = document.getElementById('revealAll');
+  all.addEventListener('click', function () {
+    var anyClosed = Array.prototype.some.call(answers, function (el) { return !el.classList.contains('open'); });
+    answers.forEach(function (el) { el.classList.toggle('open', anyClosed); });
+    all.textContent = anyClosed ? 'Скрыть все ответы' : 'Показать все ответы';
+  });
+})();
+</script>
+</body>
+</html>
